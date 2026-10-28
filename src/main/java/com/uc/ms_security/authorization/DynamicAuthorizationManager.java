@@ -20,7 +20,12 @@ public class DynamicAuthorizationManager
 
     private static final Pattern USER_PROFILE_PATH =
             Pattern.compile("^/api/users/(\\d+)/profile$");
-
+    private static final Pattern USER_DETAIL_PATH =
+            Pattern.compile("^/api/users/(\\d+)/detail$");
+    private static final Pattern USER_ROLES_PATH =
+            Pattern.compile("^/api/users/(\\d+)/detail-with-roles$");
+    private static final Pattern USER_ROLE_ASSIGNMENTS_PATH =
+            Pattern.compile("^/api/user-roles/users/(\\d+)$");
     private final PermissionService permissionService;
 
     @Override
@@ -39,20 +44,49 @@ public class DynamicAuthorizationManager
             return new AuthorizationDecision(false);
         }
 
-        Matcher profilePath = USER_PROFILE_PATH.matcher(
-                context.getRequest().getRequestURI());
-        if (profilePath.matches()
-                && Long.toString(userId).equals(profilePath.group(1))
-                && isSelfServiceProfileMethod(
-                        context.getRequest().getMethod())) {
+        String requestUri = context.getRequest().getRequestURI();
+        String method = context.getRequest().getMethod();
+        if (isSelfServiceRequest(userId, method, requestUri)) {
             return new AuthorizationDecision(true);
         }
 
         boolean permitted = permissionService.hasPermission(
                 userId,
-                context.getRequest().getMethod(),
-                context.getRequest().getRequestURI());
+                method,
+                requestUri);
         return new AuthorizationDecision(permitted);
+    }
+
+    private boolean isSelfServiceRequest(
+            long authenticatedUserId,
+            String method,
+            String requestUri) {
+        if ("GET".equals(method)
+                && matchesOwnUserPath(
+                        authenticatedUserId, USER_DETAIL_PATH, requestUri)) {
+            return true;
+        }
+
+        if ("GET".equals(method)
+                && (matchesOwnUserPath(authenticatedUserId, USER_ROLES_PATH, requestUri)
+                        || matchesOwnUserPath(
+                                authenticatedUserId,
+                                USER_ROLE_ASSIGNMENTS_PATH,
+                                requestUri))) {
+            return true;
+        }
+
+        return matchesOwnUserPath(authenticatedUserId, USER_PROFILE_PATH, requestUri)
+                && isSelfServiceProfileMethod(method);
+    }
+
+    private boolean matchesOwnUserPath(
+            long authenticatedUserId,
+            Pattern pathPattern,
+            String requestUri) {
+        Matcher path = pathPattern.matcher(requestUri);
+        return path.matches()
+                && Long.toString(authenticatedUserId).equals(path.group(1));
     }
 
     private boolean isSelfServiceProfileMethod(String method) {

@@ -35,6 +35,54 @@ class DynamicAuthorizationManagerTest {
     }
 
     @Test
+    void allowsAuthenticatedUserToReadOwnUserDetails() {
+        Authentication authentication = authenticatedAs("42");
+        RequestAuthorizationContext context = requestContext(
+                "GET", "/api/users/42/detail");
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication, context).isGranted());
+    }
+
+    @Test
+    void allowsAuthenticatedUserToReadOwnRolesFromEitherEndpoint() {
+        Authentication authentication = authenticatedAs("42");
+        RequestAuthorizationContext detailWithRoles = requestContext(
+                "GET", "/api/users/42/detail-with-roles");
+        RequestAuthorizationContext roleAssignments = requestContext(
+                "GET", "/api/user-roles/users/42");
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication, detailWithRoles).isGranted());
+        assertTrue(authorizationManager.authorize(
+                () -> authentication, roleAssignments).isGranted());
+    }
+
+    @Test
+    void deniesAuthenticatedUserAccessToAnotherUsersRoles() {
+        Authentication authentication = authenticatedAs("42");
+        RequestAuthorizationContext detailWithRoles = requestContext(
+                "GET", "/api/users/7/detail-with-roles");
+        RequestAuthorizationContext roleAssignments = requestContext(
+                "GET", "/api/user-roles/users/7");
+
+        assertFalse(authorizationManager.authorize(
+                () -> authentication, detailWithRoles).isGranted());
+        assertFalse(authorizationManager.authorize(
+                () -> authentication, roleAssignments).isGranted());
+    }
+
+    @Test
+    void onlyAllowsGetForSelfServiceRoleQueries() {
+        Authentication authentication = authenticatedAs("42");
+        RequestAuthorizationContext context = requestContext(
+                "DELETE", "/api/user-roles/users/42");
+
+        assertFalse(authorizationManager.authorize(
+                () -> authentication, context).isGranted());
+    }
+
+    @Test
     void deniesUserAccessToAnotherUsersProfileWithoutPermission() {
         Authentication authentication = authenticatedAs("42");
         RequestAuthorizationContext context = requestContext(
