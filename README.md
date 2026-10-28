@@ -16,14 +16,14 @@ Spring Data JPA y MySQL.
 1. Crea la base de datos en MySQL:
 
    ```sql
-   CREATE DATABASE security_ms_db;
+   CREATE DATABASE sports_system_db;
    ```
 
 2. Configura la conexión a la base de datos mediante variables de entorno de
    Spring Boot:
 
    ```powershell
-   $env:SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/security_ms_db"
+   $env:SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/sports_system_db"
    $env:SPRING_DATASOURCE_USERNAME="root"
    $env:SPRING_DATASOURCE_PASSWORD="<tu-clave-de-MySQL>"
    ```
@@ -31,7 +31,7 @@ Spring Data JPA y MySQL.
    En Linux o macOS:
 
    ```bash
-   export SPRING_DATASOURCE_URL='jdbc:mysql://localhost:3306/security_ms_db'
+   export SPRING_DATASOURCE_URL='jdbc:mysql://localhost:3306/sports_system_db'
    export SPRING_DATASOURCE_USERNAME='root'
    export SPRING_DATASOURCE_PASSWORD='<tu-clave-de-MySQL>'
    ```
@@ -72,6 +72,22 @@ En Linux o macOS:
 ```bash
 ./mvnw spring-boot:run
 ```
+
+### IntelliJ IDEA
+
+Abre el proyecto importando `pom.xml` como proyecto Maven y verifica:
+
+1. En **File > Project Structure > Project**, selecciona JDK 17 como **Project
+   SDK** y **Language level**.
+2. En **Settings > Build, Execution, Deployment > Build Tools > Maven >
+   Importing**, selecciona JDK 17 como **JDK for importer**.
+3. En la ventana **Maven**, pulsa **Reload All Maven Projects** para sincronizar
+   el nivel de compilación definido en `pom.xml`.
+
+El proyecto configura el bytecode de Java 17 mediante Maven. Si IntelliJ aún
+indica que el módulo está configurado para JVM target 5, revisa **File >
+Project Structure > Modules > Sources** y establece **Language level** en 17;
+después recarga el proyecto Maven.
 
 Ejecutar las pruebas:
 
