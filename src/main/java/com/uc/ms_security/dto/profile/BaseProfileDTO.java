@@ -16,6 +16,9 @@ public class BaseProfileDTO {
     @Size(max = 30, message = "El teléfono no puede superar 30 caracteres")
     private String phone;
 
+    @Size(max = 2048, message = "La URL de la fotografía no puede superar 2048 caracteres")
+    private String photoUrl;
+
     @NotNull(message = "La fecha de nacimiento es obligatoria")
     @Past(message = "La fecha de nacimiento debe ser anterior a hoy")
     private LocalDate birthDate;

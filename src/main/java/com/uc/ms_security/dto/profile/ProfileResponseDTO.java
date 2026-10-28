@@ -8,5 +8,6 @@ public class ProfileResponseDTO {
     Long id;
     Long userId;
     String phone;
+    String photoUrl;
     LocalDate birthDate;
 }

@@ -20,6 +20,9 @@ public class Profile {
     @Column(nullable = false, length = 30)
     private String phone;
 
+    @Column(length = 2048)
+    private String photoUrl;
+
     @Column(nullable = false)
     private LocalDate birthDate;
 
