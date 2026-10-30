@@ -48,6 +48,12 @@ public class User {
     )
     private String password;
 
+    @Column(name = "auth_provider", length = 30)
+    private String authProvider = "CREDENTIALS";
+
+    @Column(name = "external_subject", length = 200)
+    private String externalSubject;
+
         @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private Profile profile;
 

@@ -33,6 +33,7 @@ public class UserMapper {
         user.setName(dto.getName()); //Le asignamos los atributos
         user.setEmail(dto.getEmail()); //Le asignamos los atributos
         user.setPassword(encodedPassword); //La contraseña ya fue protegida por el servicio
+        user.setAuthProvider("CREDENTIALS");
 
         return user;
     }

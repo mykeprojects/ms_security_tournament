@@ -5,5 +5,6 @@ public enum ErrorCase {
     ALREADY_EXISTS,
     CONFLICT,
     INVALID_OPERATION,
-    UNAUTHORIZED
+    UNAUTHORIZED,
+    INTERNAL_ERROR
 }

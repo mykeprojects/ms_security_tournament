@@ -54,6 +54,19 @@ Spring Data JPA y MySQL.
    CORS permite los métodos `GET`, `POST`, `PUT`, `DELETE` y `OPTIONS`, y las
    cabeceras `Authorization` y `Content-Type`.
 
+5. Para autenticación con Firebase, descarga la cuenta de servicio desde
+   Firebase Console y configura su ruta sin incluirla en el repositorio:
+
+   ```powershell
+   $env:GOOGLE_APPLICATION_CREDENTIALS="C:\ruta\firebase-service-account.json"
+   $env:FIREBASE_PROJECT_ID="id-del-proyecto-firebase"
+   ```
+
+   El `FIREBASE_PROJECT_ID` debe coincidir con `VITE_FIREBASE_PROJECT_ID` del
+   frontend. Si falta la cuenta de servicio, el backend responderá con un
+   error de configuración; si el ID token es inválido o pertenece a otro
+   proyecto, responderá `401`.
+
 La aplicación escucha en `http://localhost:8181`. Hibernate actualiza el
 esquema automáticamente (`spring.jpa.hibernate.ddl-auto=update`); para
 producción, se recomienda administrar los cambios de esquema mediante
@@ -112,7 +125,9 @@ si el usuario ya existe.
 
 ## Autenticación
 
-El login es el único endpoint público. Envía las credenciales como JSON:
+El registro, el login y la validación del proveedor externo son endpoints
+públicos. Para iniciar sesión, envía las
+credenciales como JSON:
 
 ```http
 POST /api/auth/login
@@ -154,15 +169,29 @@ usuario ni borrar un perfil.
 
 ## API disponible
 
-Todos los endpoints usan el prefijo `http://localhost:8181`. Salvo el login,
-requieren autenticación y autorización.
+Todos los endpoints usan el prefijo `http://localhost:8181`. Salvo el registro
+y el login, requieren autenticación y autorización.
 
 ### Autenticación
 
 | Método | Ruta | Uso |
 |---|---|---|
+| `POST` | `/api/auth/register` | Registrar una cuenta mediante credenciales |
 | `POST` | `/api/auth/login` | Iniciar sesión y obtener JWT |
+| `POST` | `/api/auth/oauth` | Validar un ID token de Firebase y obtener JWT |
+| `POST` | `/api/auth/logout` | Revocar la sesión JWT actual |
 
+El frontend conserva el JWT en una cookie de sesión y lo envía como cabecera
+`Authorization: Bearer` mediante su interceptor HTTP. El backend registra cada
+JWT en `sessions`; una sesión revocada o expirada deja de autorizar operaciones
+protegidas.
+
+Para Firebase, configura `GOOGLE_APPLICATION_CREDENTIALS` con la ruta absoluta
+al nuevo archivo JSON de la cuenta de servicio y `FIREBASE_PROJECT_ID`. No
+incluyas el JSON en el repositorio. La aplicación carga las credenciales de
+forma diferida al primer login OAuth y depende de la interfaz
+`ExternalIdentityProvider`, por lo que otro proveedor puede incorporarse sin
+cambiar el flujo de autenticación ni la autorización.
 ### Usuarios — HU-SE-01
 
 | Método | Ruta | Uso |
@@ -176,10 +205,11 @@ requieren autenticación y autorización.
 | `PUT` | `/api/users/{id}` | Actualizar nombre, email y opcionalmente contraseña |
 | `DELETE` | `/api/users/{id}` | Eliminar usuario |
 
-Para registrar un usuario:
+El registro público se realiza mediante `/api/auth/register` y no requiere
+token:
 
 ```http
-POST /api/users
+POST /api/auth/register
 Content-Type: application/json
 Authorization: Bearer <accessToken>
 ```
