@@ -1,7 +1,8 @@
 package com.uc.ms_security.authorization;
 
 import com.uc.ms_security.service.PermissionService;
-import lombok.RequiredArgsConstructor;
+import com.uc.ms_security.service.SessionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.authorization.AuthorizationResult;
@@ -14,7 +15,6 @@ import java.util.regex.Pattern;
 import java.util.function.Supplier;
 
 @Component
-@RequiredArgsConstructor
 public class DynamicAuthorizationManager
         implements AuthorizationManager<RequestAuthorizationContext> {
 
@@ -27,6 +27,19 @@ public class DynamicAuthorizationManager
     private static final Pattern USER_ROLE_ASSIGNMENTS_PATH =
             Pattern.compile("^/api/user-roles/users/(\\d+)$");
     private final PermissionService permissionService;
+    private final SessionService sessionService;
+
+    @Autowired
+    public DynamicAuthorizationManager(
+            PermissionService permissionService,
+            SessionService sessionService) {
+        this.permissionService = permissionService;
+        this.sessionService = sessionService;
+    }
+
+    public DynamicAuthorizationManager(PermissionService permissionService) {
+        this(permissionService, null);
+    }
 
     @Override
     public AuthorizationResult authorize(
@@ -34,6 +47,11 @@ public class DynamicAuthorizationManager
             RequestAuthorizationContext context) {
         Authentication authentication = authenticationSupplier.get();
         if (authentication == null || !authentication.isAuthenticated()) {
+            return new AuthorizationDecision(false);
+        }
+        if (sessionService != null
+                && authentication instanceof org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken jwt
+                && !sessionService.isActive(jwt.getToken().getTokenValue())) {
             return new AuthorizationDecision(false);
         }
 

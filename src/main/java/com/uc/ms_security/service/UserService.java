@@ -14,6 +14,7 @@ import com.uc.ms_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -37,9 +38,30 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
         User user = userMapper.toEntity(dto, encodedPassword); //Lo paso a una entidad con el mapper
-        User savedUser = userRepository.save(user); //Le pido al repositorio que me lo guarde.(save sirve para actualizar o para crear)
+        User savedUser;
+        try {
+            savedUser = userRepository.saveAndFlush(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new ApplicationException(
+                    ErrorCase.ALREADY_EXISTS,
+                    "Ya existe un usuario con este email");
+        }
         //savedUser tiene id porque ahora me lo esta creando
         return userMapper.toResponseDTO(savedUser); //Me devuelve las fichas del usuario para que no me manda contraseñas
+    }
+
+    public User createExternal(
+            String name,
+            String email,
+            String provider,
+            String subject) {
+        User user = new User();
+        user.setName(name == null || name.isBlank() ? email : name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
+        user.setAuthProvider(provider);
+        user.setExternalSubject(subject);
+        return userRepository.saveAndFlush(user);
     }
 
     public List<UserResponseDTO> findAll() {

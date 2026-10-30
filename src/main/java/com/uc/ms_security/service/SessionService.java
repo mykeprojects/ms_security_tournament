@@ -11,8 +11,12 @@ import com.uc.ms_security.repository.SessionRepository;
 import com.uc.ms_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Service
 @RequiredArgsConstructor
@@ -91,6 +95,33 @@ public class SessionService {
         sessionRepository.delete(
                 findSession(userId, sessionId)
         );
+    }
+
+    public void createForAuthentication(
+            User user,
+            String token,
+            Instant expiration) {
+        Session session = new Session();
+        session.setToken(token);
+        session.setExpiration(LocalDateTime.ofInstant(expiration, ZoneOffset.UTC));
+        session.setUser(user);
+        sessionRepository.save(session);
+    }
+
+    public boolean isActive(String token) {
+        return sessionRepository.findByToken(token)
+                .map(session -> session.getExpiration().isAfter(LocalDateTime.now(ZoneOffset.UTC)))
+                .orElse(false);
+    }
+
+    @Transactional
+    public void revokeByToken(String token) {
+        sessionRepository.deleteByToken(token);
+    }
+
+    @Transactional
+    public void revokeAllByUserId(Long userId) {
+        sessionRepository.deleteAllByUserId(userId);
     }
 
     private User findUser(Long userId) {

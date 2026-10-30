@@ -15,4 +15,10 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     boolean existsByToken(String token);
     boolean existsByTokenAndIdNot(String token, Long id);
+
+    Optional<Session> findByToken(String token);
+
+    void deleteByToken(String token);
+
+    void deleteAllByUserId(Long userId);
 }
