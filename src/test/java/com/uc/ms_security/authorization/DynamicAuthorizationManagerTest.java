@@ -93,6 +93,21 @@ class DynamicAuthorizationManagerTest {
     }
 
     @Test
+    void allowsAuthenticatedUserToManageOwnTwoFactorPreference() {
+        Authentication authentication = authenticatedAs("42");
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("GET", "/api/auth/2fa")).isGranted());
+        assertTrue(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("PUT", "/api/auth/2fa")).isGranted());
+        assertFalse(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("DELETE", "/api/auth/2fa")).isGranted());
+    }
+
+    @Test
     void doesNotAllowSelfServiceProfileDeletion() {
         Authentication authentication = authenticatedAs("42");
         RequestAuthorizationContext context = requestContext(

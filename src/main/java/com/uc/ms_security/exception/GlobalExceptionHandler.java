@@ -1,5 +1,6 @@
 package com.uc.ms_security.exception;
 
+import com.uc.ms_security.notification.NotificationDeliveryException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,17 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(NotificationDeliveryException.class)
+    public ResponseEntity<Map<String, String>> handleNotificationDeliveryException(
+            NotificationDeliveryException exception) {
+
+        Map<String, String> error = new LinkedHashMap<>();
+        error.put("errorCase", ErrorCase.INTERNAL_ERROR.name());
+        error.put("message", exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
 
     @ExceptionHandler(Exception.class)

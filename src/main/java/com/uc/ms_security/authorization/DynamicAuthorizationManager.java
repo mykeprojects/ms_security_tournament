@@ -94,6 +94,10 @@ public class DynamicAuthorizationManager
             return true;
         }
 
+        if (isOwnTwoFactorPreference(method, requestUri)) {
+            return true;
+        }
+
         return matchesOwnUserPath(authenticatedUserId, USER_PROFILE_PATH, requestUri)
                 && isSelfServiceProfileMethod(method);
     }
@@ -111,5 +115,10 @@ public class DynamicAuthorizationManager
         return "GET".equals(method)
                 || "POST".equals(method)
                 || "PUT".equals(method);
+    }
+
+    private boolean isOwnTwoFactorPreference(String method, String requestUri) {
+        return "/api/auth/2fa".equals(requestUri)
+                && ("GET".equals(method) || "PUT".equals(method));
     }
 }

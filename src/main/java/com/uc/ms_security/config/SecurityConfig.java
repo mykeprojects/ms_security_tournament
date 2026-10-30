@@ -63,6 +63,7 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/register",
                                 "/api/auth/oauth",
+                                "/api/auth/2fa/verify",
                                 "/api/auth/password-recovery/**").permitAll()
                         .requestMatchers("/api/auth/logout").authenticated()
                         .anyRequest().access(dynamicAuthorizationManager))

@@ -1,6 +1,7 @@
 package com.uc.ms_security.controller;
 
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
+import com.uc.ms_security.dto.auth.CredentialLoginResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
 import com.uc.ms_security.dto.auth.ExternalLoginRequestDTO;
 import com.uc.ms_security.dto.auth.PasswordRecoveryRequestDTO;
@@ -30,7 +31,7 @@ public class AuthController {
     private final PasswordRecoveryService passwordRecoveryService;
 
     @PostMapping("/login")
-    public AuthResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {
+    public CredentialLoginResponseDTO login(@Valid @RequestBody LoginRequestDTO dto) {
         return authService.login(dto);
     }
 

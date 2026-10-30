@@ -54,6 +54,9 @@ public class User {
     @Column(name = "external_subject", length = 200)
     private String externalSubject;
 
+    @Column(name = "two_factor_enabled")
+    private Boolean twoFactorEnabled = Boolean.FALSE;
+
         @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private Profile profile;
 

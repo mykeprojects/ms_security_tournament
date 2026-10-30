@@ -84,13 +84,19 @@ public class DatabaseSeeder {
     }
 
     private User findOrCreateUser() {
-        return userRepository.findByEmail("admin@uc.edu.co").orElseGet(() -> {
-            User user = new User();
-            user.setName("Administrador");
-            user.setEmail("admin@uc.edu.co");
-            user.setPassword(passwordEncoder.encode("Admin123!"));
-            return userRepository.save(user);
+        User user = userRepository.findByEmail("admin@uc.edu.co").orElseGet(() -> {
+            User created = new User();
+            created.setName("Administrador");
+            created.setEmail("admin@uc.edu.co");
+            created.setPassword(passwordEncoder.encode("Admin123!"));
+            created.setTwoFactorEnabled(false);
+            return userRepository.save(created);
         });
+        if (!Boolean.FALSE.equals(user.getTwoFactorEnabled())) {
+            user.setTwoFactorEnabled(false);
+            return userRepository.save(user);
+        }
+        return user;
     }
 
     private Permission findOrCreatePermission(PermissionSeed seed) {

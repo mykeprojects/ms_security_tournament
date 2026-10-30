@@ -1,8 +1,10 @@
 package com.uc.ms_security.service;
 
 import com.uc.ms_security.dto.auth.AuthResponseDTO;
+import com.uc.ms_security.dto.auth.CredentialLoginResponseDTO;
 import com.uc.ms_security.dto.auth.LoginRequestDTO;
 import com.uc.ms_security.dto.auth.ExternalLoginRequestDTO;
+import com.uc.ms_security.dto.auth.TwoFactorVerificationDTO;
 import com.uc.ms_security.dto.user.CreateUserDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.entity.User;
@@ -11,6 +13,7 @@ import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.repository.UserRepository;
 import com.uc.ms_security.service.identity.ExternalIdentity;
 import com.uc.ms_security.service.identity.ExternalIdentityProvider;
+import com.uc.ms_security.service.twofactor.TwoFactorChallengeStarted;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,9 +31,10 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserService userService;
     private final SessionService sessionService;
+    private final TwoFactorService twoFactorService;
     private final List<ExternalIdentityProvider> externalIdentityProviders;
 
-    public AuthResponseDTO login(LoginRequestDTO dto) {
+    public CredentialLoginResponseDTO login(LoginRequestDTO dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(this::unauthorized);
 
@@ -43,6 +47,21 @@ public class AuthService {
             throw unauthorized();
         }
 
+        if (twoFactorService.requiresSecondFactor(user)) {
+            TwoFactorChallengeStarted challenge = twoFactorService.startLoginChallenge(user);
+            return CredentialLoginResponseDTO.challenge(
+                    challenge.challengeToken(),
+                    challenge.expiresAt(),
+                    challenge.message());
+        }
+
+        return CredentialLoginResponseDTO.authenticated(createSession(user));
+    }
+
+    public AuthResponseDTO verifyTwoFactor(TwoFactorVerificationDTO dto) {
+        User user = twoFactorService.consumeChallenge(
+                dto.getChallengeToken(),
+                dto.getCode());
         return createSession(user);
     }
 
