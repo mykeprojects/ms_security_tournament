@@ -6,6 +6,8 @@ import com.uc.ms_security.dto.user.UserDetailResponseDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.dto.user.UserSessionsResponseDTO;
 import com.uc.ms_security.dto.userrole.UserRolesResponseDTO;
+import com.uc.ms_security.dto.permission.PermissionResponseDTO;
+import com.uc.ms_security.service.PermissionService;
 import com.uc.ms_security.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final PermissionService permissionService;
 
     @PostMapping //Decorador para definir la creación
     @ResponseStatus(HttpStatus.CREATED)
@@ -64,5 +67,10 @@ public class UserController {
     @GetMapping("/{id}/detail-with-roles")
     public UserRolesResponseDTO findByIdAndRoles(@PathVariable Long id) {
         return userService.findByIdAndRoles(id);
+    }
+
+    @GetMapping("/{id}/permissions")
+    public List<PermissionResponseDTO> findPermissionsByUserId(@PathVariable Long id) {
+        return permissionService.findAllByUserId(id);
     }
 }

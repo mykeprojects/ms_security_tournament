@@ -24,6 +24,8 @@ public class DynamicAuthorizationManager
             Pattern.compile("^/api/users/(\\d+)/detail$");
     private static final Pattern USER_ROLES_PATH =
             Pattern.compile("^/api/users/(\\d+)/detail-with-roles$");
+    private static final Pattern USER_PERMISSIONS_PATH =
+            Pattern.compile("^/api/users/(\\d+)/permissions$");
     private static final Pattern USER_ROLE_ASSIGNMENTS_PATH =
             Pattern.compile("^/api/user-roles/users/(\\d+)$");
     private final PermissionService permissionService;
@@ -86,6 +88,12 @@ public class DynamicAuthorizationManager
         }
 
         if ("GET".equals(method)
+                && matchesOwnUserPath(
+                        authenticatedUserId, USER_PERMISSIONS_PATH, requestUri)) {
+            return true;
+        }
+
+        if ("GET".equals(method)
                 && (matchesOwnUserPath(authenticatedUserId, USER_ROLES_PATH, requestUri)
                         || matchesOwnUserPath(
                                 authenticatedUserId,
@@ -114,7 +122,8 @@ public class DynamicAuthorizationManager
     private boolean isSelfServiceProfileMethod(String method) {
         return "GET".equals(method)
                 || "POST".equals(method)
-                || "PUT".equals(method);
+                || "PUT".equals(method)
+                || "DELETE".equals(method);
     }
 
     private boolean isOwnTwoFactorPreference(String method, String requestUri) {

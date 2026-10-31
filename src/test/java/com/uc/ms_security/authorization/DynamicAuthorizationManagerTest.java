@@ -27,11 +27,23 @@ class DynamicAuthorizationManagerTest {
     @Test
     void allowsAuthenticatedUserToManageOwnProfile() {
         Authentication authentication = authenticatedAs("42");
-        RequestAuthorizationContext context = requestContext(
+        RequestAuthorizationContext createContext = requestContext(
+                "POST", "/api/users/42/profile");
+        RequestAuthorizationContext readContext = requestContext(
+                "GET", "/api/users/42/profile");
+        RequestAuthorizationContext updateContext = requestContext(
                 "PUT", "/api/users/42/profile");
+        RequestAuthorizationContext deleteContext = requestContext(
+                "DELETE", "/api/users/42/profile");
 
         assertTrue(authorizationManager.authorize(
-                () -> authentication, context).isGranted());
+                () -> authentication, createContext).isGranted());
+        assertTrue(authorizationManager.authorize(
+                () -> authentication, readContext).isGranted());
+        assertTrue(authorizationManager.authorize(
+                () -> authentication, updateContext).isGranted());
+        assertTrue(authorizationManager.authorize(
+                () -> authentication, deleteContext).isGranted());
     }
 
     @Test
@@ -56,6 +68,24 @@ class DynamicAuthorizationManagerTest {
                 () -> authentication, detailWithRoles).isGranted());
         assertTrue(authorizationManager.authorize(
                 () -> authentication, roleAssignments).isGranted());
+    }
+
+    @Test
+    void allowsAuthenticatedUserToReadOwnEffectivePermissions() {
+        Authentication authentication = authenticatedAs("42");
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("GET", "/api/users/42/permissions")).isGranted());
+    }
+
+    @Test
+    void deniesAuthenticatedUserAccessToAnotherUsersEffectivePermissions() {
+        Authentication authentication = authenticatedAs("42");
+
+        assertFalse(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("GET", "/api/users/7/permissions")).isGranted());
     }
 
     @Test
@@ -85,11 +115,23 @@ class DynamicAuthorizationManagerTest {
     @Test
     void deniesUserAccessToAnotherUsersProfileWithoutPermission() {
         Authentication authentication = authenticatedAs("42");
-        RequestAuthorizationContext context = requestContext(
+        RequestAuthorizationContext createContext = requestContext(
+                "POST", "/api/users/7/profile");
+        RequestAuthorizationContext readContext = requestContext(
+                "GET", "/api/users/7/profile");
+        RequestAuthorizationContext updateContext = requestContext(
                 "PUT", "/api/users/7/profile");
+        RequestAuthorizationContext deleteContext = requestContext(
+                "DELETE", "/api/users/7/profile");
 
         assertFalse(authorizationManager.authorize(
-                () -> authentication, context).isGranted());
+                () -> authentication, createContext).isGranted());
+        assertFalse(authorizationManager.authorize(
+                () -> authentication, readContext).isGranted());
+        assertFalse(authorizationManager.authorize(
+                () -> authentication, updateContext).isGranted());
+        assertFalse(authorizationManager.authorize(
+                () -> authentication, deleteContext).isGranted());
     }
 
     @Test
@@ -108,15 +150,6 @@ class DynamicAuthorizationManagerTest {
     }
 
     @Test
-    void doesNotAllowSelfServiceProfileDeletion() {
-        Authentication authentication = authenticatedAs("42");
-        RequestAuthorizationContext context = requestContext(
-                "DELETE", "/api/users/42/profile");
-
-        assertFalse(authorizationManager.authorize(
-                () -> authentication, context).isGranted());
-    }
-
     private Authentication authenticatedAs(String userId) {
         Authentication authentication = mock(Authentication.class);
         when(authentication.isAuthenticated()).thenReturn(true);

@@ -29,6 +29,9 @@ public class PermissionService {
         return mapper.toResponseDTO(repository.save(permission));
     }
     public List<PermissionResponseDTO> findAll() { return mapper.toResponseDTOList(repository.findAll()); }
+    public List<PermissionResponseDTO> findAllByUserId(Long userId) {
+        return mapper.toResponseDTOList(repository.findAllByUserId(userId));
+    }
     public PermissionResponseDTO findById(Long id) { return mapper.toResponseDTO(findEntity(id)); }
     public PermissionResponseDTO update(Long id, UpdatePermissionDTO dto) {
         Permission permission = findEntity(id);

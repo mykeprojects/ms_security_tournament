@@ -54,18 +54,19 @@ Spring Data JPA y MySQL.
    CORS permite los métodos `GET`, `POST`, `PUT`, `DELETE` y `OPTIONS`, y las
    cabeceras `Authorization` y `Content-Type`.
 
-5. Para autenticación con Firebase, descarga la cuenta de servicio desde
-   Firebase Console y configura su ruta sin incluirla en el repositorio:
+5. Para validar los inicios de sesión con Firebase, configura el ID del
+   proyecto usado también por el frontend:
 
    ```powershell
-   $env:GOOGLE_APPLICATION_CREDENTIALS="C:\ruta\firebase-service-account.json"
-   $env:FIREBASE_PROJECT_ID="id-del-proyecto-firebase"
+   $env:FIREBASE_PROJECT_ID="sports-system-uc-2026"
    ```
 
    El `FIREBASE_PROJECT_ID` debe coincidir con `VITE_FIREBASE_PROJECT_ID` del
-   frontend. Si falta la cuenta de servicio, el backend responderá con un
-   error de configuración; si el ID token es inválido o pertenece a otro
-   proyecto, responderá `401`.
+   frontend. El archivo local `application.properties` usa este mismo valor
+   como predeterminado; define la variable de entorno para reemplazarlo en
+   otros entornos. El backend valida la firma y el proyecto del ID token con
+   las claves públicas de Firebase, por lo que no necesita una cuenta de
+   servicio.
 
 La aplicación escucha en `http://localhost:8181`. Hibernate actualiza el
 esquema automáticamente (`spring.jpa.hibernate.ddl-auto=update`); para
@@ -186,12 +187,12 @@ El frontend conserva el JWT en una cookie de sesión y lo envía como cabecera
 JWT en `sessions`; una sesión revocada o expirada deja de autorizar operaciones
 protegidas.
 
-Para Firebase, configura `GOOGLE_APPLICATION_CREDENTIALS` con la ruta absoluta
-al nuevo archivo JSON de la cuenta de servicio y `FIREBASE_PROJECT_ID`. No
-incluyas el JSON en el repositorio. La aplicación carga las credenciales de
-forma diferida al primer login OAuth y depende de la interfaz
-`ExternalIdentityProvider`, por lo que otro proveedor puede incorporarse sin
-cambiar el flujo de autenticación ni la autorización.
+Para Firebase, el backend valida el ID token usando el ID de proyecto
+`security.firebase.project-id`, que debe coincidir con
+`VITE_FIREBASE_PROJECT_ID` en el frontend. La validación obtiene las claves
+públicas de Firebase; no requiere guardar credenciales de servicio. El flujo
+depende de la interfaz `ExternalIdentityProvider`, por lo que otro proveedor
+puede incorporarse sin cambiar la autenticación ni la autorización.
 ### Usuarios — HU-SE-01
 
 | Método | Ruta | Uso |
