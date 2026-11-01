@@ -11,10 +11,16 @@ import java.util.List;
 @Entity
 @Table(
         name = "permissions",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_permission_url_method",
-                columnNames = {"url", "method"}
-        )
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_permission_url_method",
+                        columnNames = {"url", "method"}
+                ),
+                @UniqueConstraint(
+                        name = "uk_permission_code",
+                        columnNames = {"code"}
+                )
+        }
 )
 @Getter
 @Setter
@@ -23,6 +29,15 @@ public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 100)
+    private String name;
+
+    @Column(length = 100)
+    private String code;
+
+    @Column(length = 255)
+    private String description;
 
     @Column(nullable = false, length = 255)
     private String url;

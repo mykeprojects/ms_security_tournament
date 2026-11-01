@@ -80,6 +80,36 @@ class DynamicAuthorizationManagerTest {
     }
 
     @Test
+    void protectsAtomicRolePermissionReplacementWithExistingAssignmentPermissions() {
+        Authentication authentication = authenticatedAs("42");
+        when(permissionService.hasPermission(42L, "GET", "/api/role-permissions"))
+                .thenReturn(true);
+        when(permissionService.hasPermission(42L, "POST", "/api/role-permissions"))
+                .thenReturn(true);
+        when(permissionService.hasPermission(
+                42L, "DELETE", "/api/role-permissions/1"))
+                .thenReturn(true);
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("PUT", "/api/roles/7/permissions")).isGranted());
+    }
+
+    @Test
+    void appliesPersistedMethodAndUrlPermissionsToDynamicEndpoints() {
+        Authentication authentication = authenticatedAs("42");
+        when(permissionService.hasPermission(
+                42L, "GET", "/api/reports")).thenReturn(true);
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("GET", "/api/reports")).isGranted());
+        assertFalse(authorizationManager.authorize(
+                () -> authentication,
+                requestContext("POST", "/api/reports")).isGranted());
+    }
+
+    @Test
     void deniesAuthenticatedUserAccessToAnotherUsersEffectivePermissions() {
         Authentication authentication = authenticatedAs("42");
 
@@ -149,7 +179,6 @@ class DynamicAuthorizationManagerTest {
                 requestContext("DELETE", "/api/auth/2fa")).isGranted());
     }
 
-    @Test
     private Authentication authenticatedAs(String userId) {
         Authentication authentication = mock(Authentication.class);
         when(authentication.isAuthenticated()).thenReturn(true);

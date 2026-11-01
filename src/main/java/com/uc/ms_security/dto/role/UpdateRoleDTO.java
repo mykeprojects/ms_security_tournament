@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 public class UpdateRoleDTO {
@@ -14,4 +16,6 @@ public class UpdateRoleDTO {
     @NotBlank(message = "La descripción es obligatoria")
     @Size(max = 255, message = "La descripción no puede superar 255 caracteres")
     private String description;
+
+    private Set<Long> permissionIds;
 }

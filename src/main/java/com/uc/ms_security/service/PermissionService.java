@@ -7,6 +7,9 @@ import com.uc.ms_security.mapper.PermissionMapper;
 import com.uc.ms_security.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -15,6 +18,9 @@ import java.util.Locale;
 public class PermissionService {
     private final PermissionRepository repository;
     private final PermissionMapper mapper;
+    private final RolePermissionSetService rolePermissionSetService;
+
+    @Transactional
     public PermissionResponseDTO create(CreatePermissionDTO dto) {
         String url = normalizeStoredUrl(dto.getUrl());
         String method = normalizeMethod(dto.getMethod());
@@ -26,7 +32,9 @@ public class PermissionService {
         Permission permission = mapper.toEntity(dto);
         permission.setUrl(url);
         permission.setMethod(method);
-        return mapper.toResponseDTO(repository.save(permission));
+        Permission savedPermission = repository.save(permission);
+        rolePermissionSetService.grantPermissionToAdmin(savedPermission);
+        return mapper.toResponseDTO(savedPermission);
     }
     public List<PermissionResponseDTO> findAll() { return mapper.toResponseDTOList(repository.findAll()); }
     public List<PermissionResponseDTO> findAllByUserId(Long userId) {
@@ -47,7 +55,13 @@ public class PermissionService {
         permission.setMethod(method);
         return mapper.toResponseDTO(repository.save(permission));
     }
-    public void delete(Long id) { repository.delete(findEntity(id)); }
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void delete(Long id) {
+        findEntity(id);
+        rolePermissionSetService.assertPermissionNotAssignedToAdmin(id);
+        rolePermissionSetService.assertPermissionDeletionDoesNotDuplicateRoles(id);
+        repository.deleteById(id);
+    }
 
     public boolean hasPermission(Long userId, String httpMethod, String requestUrl) {
         if (userId == null || httpMethod == null || requestUrl == null) {

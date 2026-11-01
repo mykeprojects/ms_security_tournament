@@ -1,12 +1,12 @@
 # MS Security Tournament
 
 Backend REST para administrar usuarios, perfiles, roles y permisos de la
-plataforma. Está desarrollado con Java 17, Spring Boot, Spring Security, JWT,
+plataforma. Está desarrollado con Java 25, Spring Boot, Spring Security, JWT,
 Spring Data JPA y MySQL.
 
 ## Requisitos
 
-- JDK 17
+- JDK 25 (LTS)
 - MySQL compatible con el driver MySQL Connector/J
 - Windows: puede usarse el wrapper `mvnw.cmd` incluido en el repositorio.
   En otros sistemas, usa `./mvnw`.
@@ -91,16 +91,16 @@ En Linux o macOS:
 
 Abre el proyecto importando `pom.xml` como proyecto Maven y verifica:
 
-1. En **File > Project Structure > Project**, selecciona JDK 17 como **Project
+1. En **File > Project Structure > Project**, selecciona JDK 25 como **Project
    SDK** y **Language level**.
 2. En **Settings > Build, Execution, Deployment > Build Tools > Maven >
-   Importing**, selecciona JDK 17 como **JDK for importer**.
+   Importing**, selecciona JDK 25 como **JDK for importer**.
 3. En la ventana **Maven**, pulsa **Reload All Maven Projects** para sincronizar
    el nivel de compilación definido en `pom.xml`.
 
-El proyecto configura el bytecode de Java 17 mediante Maven. Si IntelliJ aún
+El proyecto configura el bytecode de Java 25 mediante Maven. Si IntelliJ aún
 indica que el módulo está configurado para JVM target 5, revisa **File >
-Project Structure > Modules > Sources** y establece **Language level** en 17;
+Project Structure > Modules > Sources** y establece **Language level** en 25;
 después recarga el proyecto Maven.
 
 Ejecutar las pruebas:

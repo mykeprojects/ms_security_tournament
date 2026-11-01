@@ -28,6 +28,8 @@ public class DynamicAuthorizationManager
             Pattern.compile("^/api/users/(\\d+)/permissions$");
     private static final Pattern USER_ROLE_ASSIGNMENTS_PATH =
             Pattern.compile("^/api/user-roles/users/(\\d+)$");
+    private static final Pattern ROLE_PERMISSION_REPLACEMENT_PATH =
+            Pattern.compile("^/api/roles/(\\d+)/permissions$");
     private final PermissionService permissionService;
     private final SessionService sessionService;
 
@@ -66,6 +68,10 @@ public class DynamicAuthorizationManager
 
         String requestUri = context.getRequest().getRequestURI();
         String method = context.getRequest().getMethod();
+        if ("PUT".equals(method)
+                && ROLE_PERMISSION_REPLACEMENT_PATH.matcher(requestUri).matches()) {
+            return new AuthorizationDecision(hasPermissionAssignmentAccess(userId));
+        }
         if (isSelfServiceRequest(userId, method, requestUri)) {
             return new AuthorizationDecision(true);
         }
@@ -75,6 +81,15 @@ public class DynamicAuthorizationManager
                 method,
                 requestUri);
         return new AuthorizationDecision(permitted);
+    }
+
+    private boolean hasPermissionAssignmentAccess(long userId) {
+        return permissionService.hasPermission(
+                        userId, "GET", "/api/role-permissions")
+                && permissionService.hasPermission(
+                        userId, "POST", "/api/role-permissions")
+                && permissionService.hasPermission(
+                        userId, "DELETE", "/api/role-permissions/1");
     }
 
     private boolean isSelfServiceRequest(

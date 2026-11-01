@@ -10,6 +10,7 @@ import com.uc.ms_security.repository.RolePermissionRepository;
 import com.uc.ms_security.repository.RoleRepository;
 import com.uc.ms_security.repository.UserRepository;
 import com.uc.ms_security.repository.UserRoleRepository;
+import com.uc.ms_security.service.RolePermissionSetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -57,6 +58,7 @@ public class DatabaseSeeder {
     private final UserRoleRepository userRoleRepository;
     private final RolePermissionRepository rolePermissionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RolePermissionSetService rolePermissionSetService;
 
     @Bean
     CommandLineRunner seedDatabase() {
@@ -79,6 +81,7 @@ public class DatabaseSeeder {
                     consultantRole,
                     findOrCreatePermission(
                             new PermissionSeed("GET", "/api/users/{id}", "users")));
+            rolePermissionSetService.ensureAdminHasAllPermissions();
         };
     }
 
