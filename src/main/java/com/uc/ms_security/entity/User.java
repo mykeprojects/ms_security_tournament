@@ -75,4 +75,10 @@ public class User {
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private List<UserRole> userRoles = new ArrayList<>();
+
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+        private List<TwoFactorChallenge> twoFactorChallenges = new ArrayList<>();
+
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+        private List<PasswordResetToken> passwordResetTokens = new ArrayList<>();
 }

@@ -10,6 +10,7 @@ import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.mapper.ProfileMapper;
 import com.uc.ms_security.repository.ProfileRepository;
 import com.uc.ms_security.repository.UserRepository;
+import com.uc.ms_security.validation.PhoneNumberPolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class ProfileService {
             );
         }
 
+        requireValidPhone(dto.getPhone());
         Profile profile = profileMapper.toEntity(dto);
         profile.setUser(user);
 
@@ -45,6 +47,7 @@ public class ProfileService {
     public ProfileResponseDTO update(Long userId, UpdateProfileDTO dto) {
         Profile profile = findProfile(userId);
 
+        requireValidPhone(dto.getPhone());
         profileMapper.updateEntity(dto, profile);
         Profile updatedProfile = profileRepository.save(profile);
 
@@ -57,6 +60,15 @@ public class ProfileService {
 
     public void delete(Long userId) {
         profileRepository.delete(findProfile(userId));
+    }
+
+    private void requireValidPhone(String phone) {
+        if (!PhoneNumberPolicy.matches(phone)) {
+            throw new ApplicationException(
+                    ErrorCase.INVALID_OPERATION,
+                    PhoneNumberPolicy.MESSAGE
+            );
+        }
     }
 
     private Profile findProfile(Long userId) {

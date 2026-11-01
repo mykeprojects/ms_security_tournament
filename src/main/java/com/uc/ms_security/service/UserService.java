@@ -9,12 +9,19 @@ import com.uc.ms_security.dto.userrole.UserRolesResponseDTO;
 import com.uc.ms_security.entity.User;
 import com.uc.ms_security.exception.ApplicationException;
 import com.uc.ms_security.exception.ErrorCase;
+import com.uc.ms_security.entity.RolePermission;
+import com.uc.ms_security.entity.UserRole;
 import com.uc.ms_security.mapper.UserMapper;
+import com.uc.ms_security.repository.PasswordResetTokenRepository;
+import com.uc.ms_security.repository.RolePermissionRepository;
+import com.uc.ms_security.repository.TwoFactorChallengeRepository;
 import com.uc.ms_security.repository.UserRepository;
+import com.uc.ms_security.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +35,10 @@ public class UserService {
     //Patrón Singleton: Un objeto que va a ayudar a el servicio a funcionar.
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final TwoFactorChallengeRepository twoFactorChallengeRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final RolePermissionRepository rolePermissionRepository;
 
     public UserResponseDTO create(CreateUserDTO dto) { //Hace las validacions necesarias en este momento.
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -82,6 +93,7 @@ public class UserService {
         return userMapper.toResponseDTO(user);//responde con el usuario
     }
 
+    @Transactional(readOnly = true)
     public UserDetailResponseDTO findByIdAndProfile(Long id) {
         User user = userRepository
                 .findWithProfileById(id)
@@ -91,8 +103,15 @@ public class UserService {
                                 "Usuario no encontrado con id: " + id
                         )
                 );
+        List<UserRole> assignments = userRoleRepository.findAllByUserId(id);
+        List<Long> roleIds = assignments.stream()
+                .map(assignment -> assignment.getRole().getId())
+                .toList();
+        List<RolePermission> rolePermissions = roleIds.isEmpty()
+                ? List.of()
+                : rolePermissionRepository.findAllByRoleIdIn(roleIds);
 
-        return userMapper.toDetailResponseDTO(user);
+        return userMapper.toDetailResponseDTO(user, assignments, rolePermissions);
     }
 
     public UserSessionsResponseDTO findByIdAndSessions(Long id) {
@@ -128,8 +147,11 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return userMapper.toResponseDTO(updatedUser);
     }
+    @Transactional
     public void delete(Long id) {
         User user = findUser(id);
+        twoFactorChallengeRepository.deleteAllByUserId(id);
+        passwordResetTokenRepository.deleteAllByUserId(id);
         userRepository.delete(user);
     }
 }

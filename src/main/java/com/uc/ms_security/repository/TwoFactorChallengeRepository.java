@@ -12,4 +12,6 @@ public interface TwoFactorChallengeRepository extends JpaRepository<TwoFactorCha
     Optional<TwoFactorChallenge> findByChallengeTokenHash(String challengeTokenHash);
 
     void deleteAllByUserIdAndUsedFalse(Long userId);
+
+    void deleteAllByUserId(Long userId);
 }

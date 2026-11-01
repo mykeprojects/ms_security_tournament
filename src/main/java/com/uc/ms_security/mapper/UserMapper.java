@@ -11,7 +11,9 @@ import com.uc.ms_security.dto.user.UserDetailResponseDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.dto.user.UserSessionsResponseDTO;
 import com.uc.ms_security.dto.userrole.UserRolesResponseDTO;
+import com.uc.ms_security.entity.RolePermission;
 import com.uc.ms_security.entity.User;
+import com.uc.ms_security.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,7 @@ public class UserMapper {
     private final ProfileMapper profileMapper;
     private final SessionMapper sessionMapper;
     private final UserRoleMapper userRoleMapper;
+    private final RoleAuthorizationMapper roleAuthorizationMapper;
 
     //Transforma el DTO a Entity
     public User toEntity(CreateUserDTO dto, String encodedPassword) {
@@ -53,12 +56,16 @@ public class UserMapper {
         );
     }
 
-    public UserDetailResponseDTO toDetailResponseDTO(User user) {
+    public UserDetailResponseDTO toDetailResponseDTO(
+            User user,
+            List<UserRole> assignments,
+            List<RolePermission> rolePermissions) {
         return new UserDetailResponseDTO(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                profileMapper.toResponseDTO(user.getProfile())//Arrastra la relación
+                profileMapper.toResponseDTO(user.getProfile()),
+                roleAuthorizationMapper.toResponseDTOList(assignments, rolePermissions)
         );
     }
 
