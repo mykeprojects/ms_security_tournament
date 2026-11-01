@@ -34,6 +34,7 @@ public class DatabaseSeeder {
             new PermissionSeed("DELETE", "/api/users/{id}/profile", "profiles"),
             new PermissionSeed("GET", "/api/user-roles", "user-roles"),
             new PermissionSeed("POST", "/api/user-roles", "user-roles"),
+            new PermissionSeed("DELETE", "/api/user-roles/{id}/{id}", "user-roles"),
             new PermissionSeed("GET", "/api/roles", "roles"),
             new PermissionSeed("POST", "/api/roles", "roles"),
             new PermissionSeed("GET", "/api/roles/{id}", "roles"),
