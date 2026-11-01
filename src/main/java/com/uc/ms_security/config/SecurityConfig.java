@@ -59,7 +59,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS)) //Cada vez que mandemos un endpoint debe validar que se le envio un token
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/2fa/verify").permitAll()
                         .anyRequest().access(dynamicAuthorizationManager))
                 .oauth2ResourceServer(resourceServer -> resourceServer.jwt(
                         Customizer.withDefaults()));

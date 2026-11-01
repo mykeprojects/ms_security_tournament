@@ -48,6 +48,12 @@ public class User {
     )
     private String password;
 
+    @Column(name = "auth_provider", length = 30)
+    private String authProvider = "CREDENTIALS";
+
+    @Column(name = "two_factor_enabled")
+    private Boolean twoFactorEnabled = Boolean.TRUE;
+
         @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private Profile profile;
 
@@ -66,4 +72,7 @@ public class User {
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private List<UserRole> userRoles = new ArrayList<>();
+
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+        private List<TwoFactorChallenge> twoFactorChallenges = new ArrayList<>();
 }

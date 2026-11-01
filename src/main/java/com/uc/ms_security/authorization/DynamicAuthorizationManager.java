@@ -46,7 +46,8 @@ public class DynamicAuthorizationManager
 
         String requestUri = context.getRequest().getRequestURI();
         String method = context.getRequest().getMethod();
-        if (isSelfServiceRequest(userId, method, requestUri)) {
+        if (isSelfServiceRequest(userId, method, requestUri)
+                || isOwnTwoFactorPreference(method, requestUri)) {
             return new AuthorizationDecision(true);
         }
 
@@ -87,6 +88,11 @@ public class DynamicAuthorizationManager
         Matcher path = pathPattern.matcher(requestUri);
         return path.matches()
                 && Long.toString(authenticatedUserId).equals(path.group(1));
+    }
+
+    private boolean isOwnTwoFactorPreference(String method, String requestUri) {
+        return "/api/auth/2fa".equals(requestUri)
+                && ("GET".equals(method) || "PUT".equals(method));
     }
 
     private boolean isSelfServiceProfileMethod(String method) {

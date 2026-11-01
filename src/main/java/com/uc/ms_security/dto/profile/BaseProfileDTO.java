@@ -1,8 +1,10 @@
 package com.uc.ms_security.dto.profile;
 
+import com.uc.ms_security.validation.PhoneNumberPolicy;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +15,7 @@ import java.time.LocalDate;
 @Setter
 public class BaseProfileDTO {
     @NotBlank(message = "El teléfono es obligatorio")
-    @Size(max = 30, message = "El teléfono no puede superar 30 caracteres")
+    @Pattern(regexp = PhoneNumberPolicy.PATTERN, message = PhoneNumberPolicy.MESSAGE)
     private String phone;
 
     @Size(max = 2048, message = "La URL de la fotografía no puede superar 2048 caracteres")

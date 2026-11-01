@@ -84,13 +84,39 @@ public class DatabaseSeeder {
     }
 
     private User findOrCreateUser() {
-        return userRepository.findByEmail("admin@uc.edu.co").orElseGet(() -> {
-            User user = new User();
-            user.setName("Administrador");
-            user.setEmail("admin@uc.edu.co");
-            user.setPassword(passwordEncoder.encode("Admin123!"));
-            return userRepository.save(user);
+        User user = userRepository.findByEmail("admin@uc.edu.co").orElseGet(() -> {
+            User created = new User();
+            created.setName("Administrador");
+            created.setEmail("admin@uc.edu.co");
+            created.setPassword(passwordEncoder.encode("Admin123!"));
+            created.setAuthProvider("CREDENTIALS");
+            created.setTwoFactorEnabled(false);
+            return userRepository.save(created);
         });
+        boolean adminNeedsUpdate = !Boolean.FALSE.equals(user.getTwoFactorEnabled())
+                || user.getAuthProvider() == null;
+        if (adminNeedsUpdate) {
+            user.setTwoFactorEnabled(false);
+            if (user.getAuthProvider() == null) {
+                user.setAuthProvider("CREDENTIALS");
+            }
+            userRepository.save(user);
+        }
+        enableTwoFactorForExistingCredentialUsers();
+        return user;
+    }
+
+    private void enableTwoFactorForExistingCredentialUsers() {
+        userRepository.findAll().stream()
+                .filter(candidate -> candidate.getEmail() != null
+                        && !"admin@uc.edu.co".equalsIgnoreCase(candidate.getEmail().trim()))
+                .filter(candidate -> candidate.getAuthProvider() == null
+                        && !Boolean.TRUE.equals(candidate.getTwoFactorEnabled()))
+                .forEach(candidate -> {
+                    candidate.setAuthProvider("CREDENTIALS");
+                    candidate.setTwoFactorEnabled(true);
+                    userRepository.save(candidate);
+                });
     }
 
     private Permission findOrCreatePermission(PermissionSeed seed) {
