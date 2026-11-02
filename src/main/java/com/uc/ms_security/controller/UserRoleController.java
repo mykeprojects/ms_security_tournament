@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import com.uc.ms_security.service.UserRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -23,5 +25,26 @@ public class UserRoleController {
     
     @GetMapping("/{id}") public UserRoleResponseDTO findById(@PathVariable Long id) { return service.findById(id); }
     
-    @DeleteMapping("/{userId}/{roleId}") @ResponseStatus(HttpStatus.NO_CONTENT) public void delete(@PathVariable Long userId, @PathVariable Long roleId) { service.delete(userId, roleId); }
+    @DeleteMapping("/{userId}/{roleId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable Long userId,
+            @PathVariable Long roleId,
+            Authentication authentication) {
+        service.delete(userId, roleId, authenticatedUserId(authentication));
+    }
+
+    private long authenticatedUserId(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException(
+                    "No tienes permiso para gestionar roles de usuarios.");
+        }
+
+        try {
+            return Long.parseLong(authentication.getName());
+        } catch (NumberFormatException exception) {
+            throw new AccessDeniedException(
+                    "No tienes permiso para gestionar roles de usuarios.");
+        }
+    }
 }

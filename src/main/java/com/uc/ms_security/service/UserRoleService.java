@@ -1,6 +1,7 @@
 package com.uc.ms_security.service;
 
 import com.uc.ms_security.dto.userrole.*;
+import com.uc.ms_security.entity.Role;
 import com.uc.ms_security.entity.UserRole;
 import com.uc.ms_security.exception.*;
 import com.uc.ms_security.mapper.UserRoleMapper;
@@ -15,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserRoleService {
+    private static final List<String> ADMINISTRATOR_ROLE_NAMES =
+            List.of("ADMIN", "ADMINISTRADOR");
+
     private final UserRoleRepository repository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -57,12 +61,40 @@ public class UserRoleService {
     }
 
     @Transactional
-    public void delete(Long userId, Long roleId) {
-        repository.delete(repository.findByUserIdAndRoleId(userId, roleId)
+    public void delete(Long userId, Long roleId, Long authenticatedUserId) {
+        UserRole assignment = repository.findByUserIdAndRoleId(userId, roleId)
                 .orElseThrow(() -> new ApplicationException(
                         ErrorCase.NOT_FOUND,
                         "Asignación de rol no encontrada"
-                )));
+                ));
+        if (isProtectedAdministratorRemoval(
+                assignment, userId, authenticatedUserId)) {
+            throw new ApplicationException(
+                    ErrorCase.CONFLICT,
+                    "No puedes quitar el rol de administrador a otro usuario que también tiene ese rol."
+            );
+        }
+        repository.delete(assignment);
     }
+
+    private boolean isProtectedAdministratorRemoval(
+            UserRole assignment,
+            Long targetUserId,
+            Long authenticatedUserId) {
+        if (authenticatedUserId.equals(targetUserId)
+                || !isAdministratorRole(assignment.getRole())) {
+            return false;
+        }
+
+        return repository.findAllByUserId(authenticatedUserId).stream()
+                .anyMatch(userRole -> isAdministratorRole(userRole.getRole()));
+    }
+
+    private boolean isAdministratorRole(Role role) {
+        return role != null
+                && ADMINISTRATOR_ROLE_NAMES.stream()
+                        .anyMatch(name -> name.equalsIgnoreCase(role.getName().trim()));
+    }
+
     private UserRole findEntity(Long id) { return repository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCase.NOT_FOUND, "Relación usuario-rol no encontrada con id: " + id)); }
 }
