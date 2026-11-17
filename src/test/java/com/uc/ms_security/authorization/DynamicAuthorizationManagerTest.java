@@ -179,6 +179,16 @@ class DynamicAuthorizationManagerTest {
                 requestContext("DELETE", "/api/auth/2fa")).isGranted());
     }
 
+    @Test
+    void allowsAuthenticatedUserToValidateAPermission() {
+        Authentication authentication = authenticatedAs("1");
+        RequestAuthorizationContext context = requestContext(
+                "POST", "/api/internal/security/permissions-validation");
+
+        assertTrue(authorizationManager.authorize(() -> authentication, context).isGranted());
+        assertFalse(authorizationManager.authorize(() -> null, context).isGranted());
+    }
+
     private Authentication authenticatedAs(String userId) {
         Authentication authentication = mock(Authentication.class);
         when(authentication.isAuthenticated()).thenReturn(true);
