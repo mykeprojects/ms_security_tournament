@@ -15,6 +15,8 @@ public interface RolePermissionRepository extends JpaRepository<RolePermission, 
 
     List<RolePermission> findByRoleId(Long roleId);
 
+    void deleteAllByPermissionId(Long permissionId);
+
     @EntityGraph(attributePaths = {"role", "permission"})
     List<RolePermission> findAllByRoleIdIn(Collection<Long> roleIds);
 

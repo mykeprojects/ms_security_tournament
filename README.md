@@ -115,14 +115,26 @@ Al iniciar, el seeder crea si no existen:
 
 - Usuario administrador: `admin@uc.edu.co`
 - Contraseña inicial de desarrollo: `Admin123!`
+<<<<<<< HEAD
 - Roles `ADMIN`, `CONSULTOR` y `AFICIONADO`
 - Permisos iniciales para el administrador, permisos de consulta para el
   consultor y permisos mínimos de operación para el aficionado
+=======
+- Roles `ADMIN`, `CONSULTOR`, `ADMINISTRADOR DEPORTIVO` y `FAN`
+- Permisos de las rutas existentes de ambos backends, con `ADMIN` asociado a
+  todos los permisos
+- Permisos de consulta de usuarios para `CONSULTOR`, permisos de gestión
+  deportiva para `ADMINISTRADOR DEPORTIVO` y permisos de lectura/apuestas
+  propias para `FAN`
+>>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
 
 Estas credenciales están destinadas únicamente al desarrollo local. Cambia la
 contraseña y la estrategia de inicialización antes de desplegar el servicio en
 un entorno compartido o de producción. El seeder no sobrescribe la contraseña
-si el usuario ya existe.
+si el usuario ya existe. Los otros tres roles se crean sin usuarios de
+demostración; asígnalos a cuentas registradas desde la gestión de usuarios.
+Las asignaciones son idempotentes: al reiniciar, solo se agregan los roles,
+permisos o relaciones que falten.
 
 ## Autenticación
 
@@ -170,8 +182,10 @@ usuario ni borrar un perfil.
 
 ## API disponible
 
-Todos los endpoints usan el prefijo `http://localhost:8181`. Salvo el registro
-y el login, requieren autenticación y autorización.
+Todos los endpoints usan el prefijo `http://localhost:8181`. Login, registro,
+OAuth, verificación de segundo factor y recuperación de contraseña son públicos.
+El cierre de sesión requiere autenticación; las demás rutas protegidas usan
+autorización dinámica por permisos.
 
 ### Autenticación
 
@@ -318,6 +332,14 @@ Un permiso contiene `url`, `method` y `model`. Para restringir una ruta con
 parámetros numéricos, registra la ruta con `{id}`, por ejemplo
 `/api/users/{id}/profile`.
 
+El seeder registra las rutas de seguridad protegidas y las rutas existentes de
+gestión deportiva, partidos, anotaciones, seguimiento, métodos de pago y
+apuestas. `ADMIN` recibe todos los permisos presentes en la tabla. Los demás
+roles reciben únicamente el conjunto descrito arriba; las operaciones públicas
+de autenticación no necesitan permisos dinámicos. `POST /api/auth/logout`
+requiere autenticación, pero no una fila de permiso; la validación interna de
+permisos también está excluida de la autorización dinámica.
+
 ### Asignaciones de permisos a roles
 
 | Método | Ruta | Uso |
@@ -337,8 +359,8 @@ parámetros numéricos, registra la ruta con `{id}`, por ejemplo
 | `PUT` | `/api/users/{userId}/sessions/{sessionId}` | Actualizar sesión |
 | `DELETE` | `/api/users/{userId}/sessions/{sessionId}` | Eliminar sesión |
 
-Las sesiones también están protegidas por permisos dinámicos; el seeder no
-crea permisos para estas rutas.
+Las sesiones también están protegidas por permisos dinámicos; sus permisos se
+crean para `ADMIN`.
 
 ## Respuestas de error
 

@@ -58,8 +58,8 @@ public class PermissionService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(Long id) {
         findEntity(id);
-        rolePermissionSetService.assertPermissionNotAssignedToAdmin(id);
         rolePermissionSetService.assertPermissionDeletionDoesNotDuplicateRoles(id);
+        rolePermissionSetService.unassignPermissionFromAllRoles(id);
         repository.deleteById(id);
     }
 

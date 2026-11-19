@@ -44,4 +44,17 @@ class PermissionServiceTest {
                         "/api/reports".equals(permission.getUrl())
                                 && "GET".equals(permission.getMethod())));
     }
+
+    @Test
+    void unassignsPermissionFromRolesBeforeDeletingTheCatalogEntry() {
+        Permission permission = new Permission();
+        permission.setId(10L);
+        when(repository.findById(10L)).thenReturn(java.util.Optional.of(permission));
+
+        service.delete(10L);
+
+        verify(permissionSetService).assertPermissionDeletionDoesNotDuplicateRoles(10L);
+        verify(permissionSetService).unassignPermissionFromAllRoles(10L);
+        verify(repository).deleteById(10L);
+    }
 }

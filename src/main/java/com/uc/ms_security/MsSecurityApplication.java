@@ -10,4 +10,6 @@ public class MsSecurityApplication {
 		SpringApplication.run(MsSecurityApplication.class, args);
 	}
 
+
+	
 }

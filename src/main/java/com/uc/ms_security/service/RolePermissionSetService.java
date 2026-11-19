@@ -153,6 +153,12 @@ public class RolePermissionSetService {
         }
     }
 
+    @Transactional
+    public void unassignPermissionFromAllRoles(Long permissionId) {
+        rolePermissionRepository.deleteAllByPermissionId(permissionId);
+        rolePermissionRepository.flush();
+    }
+
     @Transactional(readOnly = true)
     public void assertPermissionNotAssignedToAdmin(Long permissionId) {
         boolean assignedToAdmin = roleRepository.findAll().stream()
