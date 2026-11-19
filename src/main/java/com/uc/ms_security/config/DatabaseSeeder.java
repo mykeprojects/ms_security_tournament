@@ -22,26 +22,42 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class DatabaseSeeder {
 
     private static final PermissionSeed[] ADMIN_PERMISSIONS = {
+            new PermissionSeed("GET", "/", "system"),
             new PermissionSeed("GET", "/api/users", "users"),
             new PermissionSeed("POST", "/api/users", "users"),
             new PermissionSeed("GET", "/api/users/{id}", "users"),
             new PermissionSeed("GET", "/api/users/{id}/detail", "users"),
+            new PermissionSeed("GET", "/api/users/{id}/detail-with-sessions", "users"),
+            new PermissionSeed("GET", "/api/users/{id}/detail-with-roles", "users"),
+            new PermissionSeed("GET", "/api/users/{id}/permissions", "users"),
             new PermissionSeed("PUT", "/api/users/{id}", "users"),
             new PermissionSeed("DELETE", "/api/users/{id}", "users"),
             new PermissionSeed("GET", "/api/users/{id}/profile", "profiles"),
             new PermissionSeed("POST", "/api/users/{id}/profile", "profiles"),
             new PermissionSeed("PUT", "/api/users/{id}/profile", "profiles"),
             new PermissionSeed("DELETE", "/api/users/{id}/profile", "profiles"),
+            new PermissionSeed("POST", "/api/users/{id}/sessions", "sessions"),
+            new PermissionSeed("GET", "/api/users/{id}/sessions", "sessions"),
+            new PermissionSeed("GET", "/api/users/{id}/sessions/{id}", "sessions"),
+            new PermissionSeed("PUT", "/api/users/{id}/sessions/{id}", "sessions"),
+            new PermissionSeed("DELETE", "/api/users/{id}/sessions/{id}", "sessions"),
+            new PermissionSeed("GET", "/api/auth/2fa", "two-factor"),
+            new PermissionSeed("PUT", "/api/auth/2fa", "two-factor"),
             new PermissionSeed("GET", "/api/user-roles", "user-roles"),
             new PermissionSeed("POST", "/api/user-roles", "user-roles"),
+            new PermissionSeed("GET", "/api/user-roles/{id}", "user-roles"),
+            new PermissionSeed("GET", "/api/user-roles/users/{id}", "user-roles"),
+            new PermissionSeed("GET", "/api/user-roles/roles/{id}", "user-roles"),
             new PermissionSeed("DELETE", "/api/user-roles/{id}/{id}", "user-roles"),
             new PermissionSeed("GET", "/api/roles", "roles"),
             new PermissionSeed("POST", "/api/roles", "roles"),
             new PermissionSeed("GET", "/api/roles/{id}", "roles"),
             new PermissionSeed("PUT", "/api/roles/{id}", "roles"),
+            new PermissionSeed("PUT", "/api/roles/{id}/permissions", "roles"),
             new PermissionSeed("DELETE", "/api/roles/{id}", "roles"),
             new PermissionSeed("GET", "/api/role-permissions", "role-permissions"),
             new PermissionSeed("POST", "/api/role-permissions", "role-permissions"),
+            new PermissionSeed("GET", "/api/role-permissions/{id}", "role-permissions"),
             new PermissionSeed(
                     "DELETE",
                     "/api/role-permissions/{id}",
@@ -51,6 +67,11 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/api/permissions/{id}", "permissions"),
             new PermissionSeed("PUT", "/api/permissions/{id}", "permissions"),
             new PermissionSeed("DELETE", "/api/permissions/{id}", "permissions"),
+            new PermissionSeed("POST", "/payment-method", "payment-methods"),
+            new PermissionSeed("GET", "/payment-method", "payment-methods"),
+            new PermissionSeed("GET", "/payment-method/{id}", "payment-methods"),
+            new PermissionSeed("PATCH", "/payment-method/{id}", "payment-methods"),
+            new PermissionSeed("DELETE", "/payment-method/{id}", "payment-methods"),
             new PermissionSeed("GET", "/sports", "sports"),
             new PermissionSeed("POST", "/sports", "sports"),
             new PermissionSeed("GET", "/sports/{id}", "sports"),
@@ -81,6 +102,75 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/skills/{id}", "skills"),
             new PermissionSeed("PATCH", "/skills/{id}", "skills"),
             new PermissionSeed("DELETE", "/skills/{id}", "skills")
+    };
+
+    private static final PermissionSeed[] SPORTS_ADMIN_PERMISSIONS = {
+            new PermissionSeed("GET", "/sports", "sports"),
+            new PermissionSeed("POST", "/sports", "sports"),
+            new PermissionSeed("GET", "/sports/{id}", "sports"),
+            new PermissionSeed("PATCH", "/sports/{id}", "sports"),
+            new PermissionSeed("DELETE", "/sports/{id}", "sports"),
+            new PermissionSeed("GET", "/teams", "teams"),
+            new PermissionSeed("POST", "/teams", "teams"),
+            new PermissionSeed("GET", "/teams/{id}", "teams"),
+            new PermissionSeed("PATCH", "/teams/{id}", "teams"),
+            new PermissionSeed("DELETE", "/teams/{id}", "teams"),
+            new PermissionSeed("GET", "/teams/{id}/sports", "teams"),
+            new PermissionSeed("POST", "/teams/{id}/sports", "teams"),
+            new PermissionSeed("DELETE", "/teams/{id}/sports/{id}", "teams"),
+            new PermissionSeed("GET", "/teams/{id}/roster", "teams"),
+            new PermissionSeed("POST", "/teams/{id}/players", "teams"),
+            new PermissionSeed("PATCH", "/contracts/{id}", "contracts"),
+            new PermissionSeed("POST", "/contracts/{id}/release", "contracts"),
+            new PermissionSeed("GET", "/players", "players"),
+            new PermissionSeed("POST", "/players", "players"),
+            new PermissionSeed("GET", "/players/{id}", "players"),
+            new PermissionSeed("PATCH", "/players/{id}", "players"),
+            new PermissionSeed("DELETE", "/players/{id}", "players"),
+            new PermissionSeed("GET", "/players/{id}/profile", "players"),
+            new PermissionSeed("POST", "/players/{id}/skills", "players"),
+            new PermissionSeed("DELETE", "/players/{id}/skills/{id}", "players"),
+            new PermissionSeed("GET", "/skills", "skills"),
+            new PermissionSeed("POST", "/skills", "skills"),
+            new PermissionSeed("GET", "/skills/{id}", "skills"),
+            new PermissionSeed("PATCH", "/skills/{id}", "skills"),
+            new PermissionSeed("DELETE", "/skills/{id}", "skills"),
+            new PermissionSeed("GET", "/matches", "matches"),
+            new PermissionSeed("GET", "/matches/available", "matches"),
+            new PermissionSeed("GET", "/matches/{id}", "matches"),
+            new PermissionSeed("POST", "/matches", "matches"),
+            new PermissionSeed("PATCH", "/matches/{id}", "matches"),
+            new PermissionSeed("PATCH", "/matches/{id}/result", "matches"),
+            new PermissionSeed("DELETE", "/matches/{id}", "matches"),
+            new PermissionSeed("GET", "/matches/{id}/bets", "bets"),
+            new PermissionSeed("POST", "/matches/{id}/settle", "bets"),
+            new PermissionSeed("GET", "/matches/{id}/annotations", "annotations"),
+            new PermissionSeed("POST", "/matches/{id}/annotations", "annotations"),
+            new PermissionSeed("PATCH", "/matches/{id}/annotations/{id}", "annotations"),
+            new PermissionSeed("DELETE", "/matches/{id}/annotations/{id}", "annotations"),
+            new PermissionSeed("GET", "/matches/{id}/tracking", "tracking"),
+            new PermissionSeed("GET", "/matches/{id}/tracking/history", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/start", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/players/{id}/position", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/ball/position", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/stop", "tracking")
+    };
+
+    private static final PermissionSeed[] FAN_PERMISSIONS = {
+            new PermissionSeed("GET", "/matches", "matches"),
+            new PermissionSeed("GET", "/matches/available", "matches"),
+            new PermissionSeed("GET", "/matches/{id}", "matches"),
+            new PermissionSeed("GET", "/matches/{id}/tracking", "tracking"),
+            new PermissionSeed("GET", "/matches/{id}/tracking/history", "tracking"),
+            new PermissionSeed("GET", "/payment-method", "payment-methods"),
+            new PermissionSeed("GET", "/fans/me", "fans"),
+            new PermissionSeed("GET", "/fans/me/payment-methods", "fan-payment-methods"),
+            new PermissionSeed("POST", "/fans/me/payment-methods", "fan-payment-methods"),
+            new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fan-payment-methods"),
+            new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fan-payment-methods"),
+            new PermissionSeed("GET", "/bets/me", "bets"),
+            new PermissionSeed("POST", "/bets", "bets"),
+            new PermissionSeed("PATCH", "/bets/{id}/cancel", "bets")
     };
 
     private static final PermissionRename[] CATALOG_PERMISSION_RENAMES = {
@@ -132,11 +222,23 @@ public class DatabaseSeeder {
             Role consultantRole = findOrCreateRole(
                     "CONSULTOR",
                     "Consulta de usuarios");
+            Role sportsAdminRole = findOrCreateRole(
+                    "ADMINISTRADOR DEPORTIVO",
+                    "Gestión deportiva y de partidos");
+            Role fanRole = findOrCreateRole(
+                    "FAN",
+                    "Consulta de partidos y gestión de apuestas propias");
             User adminUser = findOrCreateUser();
 
             assignRole(adminUser, adminRole);
             for (PermissionSeed seed : ADMIN_PERMISSIONS) {
                 assignPermission(adminRole, findOrCreatePermission(seed));
+            }
+            for (PermissionSeed seed : SPORTS_ADMIN_PERMISSIONS) {
+                assignPermission(sportsAdminRole, findOrCreatePermission(seed));
+            }
+            for (PermissionSeed seed : FAN_PERMISSIONS) {
+                assignPermission(fanRole, findOrCreatePermission(seed));
             }
             assignPermission(
                     consultantRole,
