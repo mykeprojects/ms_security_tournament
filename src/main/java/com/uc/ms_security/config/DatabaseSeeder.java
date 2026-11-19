@@ -67,16 +67,6 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/api/permissions/{id}", "permissions"),
             new PermissionSeed("PUT", "/api/permissions/{id}", "permissions"),
             new PermissionSeed("DELETE", "/api/permissions/{id}", "permissions"),
-<<<<<<< HEAD
-            new PermissionSeed("GET", "/sports", "sports"),
-            new PermissionSeed("GET", "/sports/{id}", "sports"),
-            new PermissionSeed("POST", "/sports", "sports"),
-            new PermissionSeed("PATCH", "/sports/{id}", "sports"),
-            new PermissionSeed("DELETE", "/sports/{id}", "sports"),
-            new PermissionSeed("GET", "/teams", "teams"),
-            new PermissionSeed("GET", "/teams/{id}", "teams"),
-            new PermissionSeed("POST", "/teams", "teams"),
-=======
             new PermissionSeed("POST", "/payment-method", "payment-methods"),
             new PermissionSeed("GET", "/payment-method", "payment-methods"),
             new PermissionSeed("GET", "/payment-method/{id}", "payment-methods"),
@@ -90,13 +80,11 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/teams", "teams"),
             new PermissionSeed("POST", "/teams", "teams"),
             new PermissionSeed("GET", "/teams/{id}", "teams"),
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
             new PermissionSeed("PATCH", "/teams/{id}", "teams"),
             new PermissionSeed("DELETE", "/teams/{id}", "teams"),
             new PermissionSeed("GET", "/teams/{id}/sports", "teams"),
             new PermissionSeed("POST", "/teams/{id}/sports", "teams"),
             new PermissionSeed("DELETE", "/teams/{id}/sports/{id}", "teams"),
-<<<<<<< HEAD
             new PermissionSeed("GET", "/teams/{id}/roster", "contracts"),
             new PermissionSeed("POST", "/teams/{id}/players", "contracts"),
             new PermissionSeed("PATCH", "/contracts/{id}", "contracts"),
@@ -152,24 +140,40 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/matches/{id}", "matches"),
             new PermissionSeed("POST", "/matches", "matches"),
             new PermissionSeed("POST", "/matches/reminders/notify", "matches"),
-=======
-            new PermissionSeed("GET", "/teams/{id}/roster", "teams"),
-            new PermissionSeed("POST", "/teams/{id}/players", "teams"),
-            new PermissionSeed("PATCH", "/contracts/{id}", "contracts"),
-            new PermissionSeed("POST", "/contracts/{id}/release", "contracts"),
-            new PermissionSeed("GET", "/players", "players"),
-            new PermissionSeed("POST", "/players", "players"),
-            new PermissionSeed("GET", "/players/{id}", "players"),
-            new PermissionSeed("PATCH", "/players/{id}", "players"),
-            new PermissionSeed("DELETE", "/players/{id}", "players"),
-            new PermissionSeed("GET", "/players/{id}/profile", "players"),
-            new PermissionSeed("POST", "/players/{id}/skills", "players"),
-            new PermissionSeed("DELETE", "/players/{id}/skills/{id}", "players"),
-            new PermissionSeed("GET", "/skills", "skills"),
-            new PermissionSeed("POST", "/skills", "skills"),
-            new PermissionSeed("GET", "/skills/{id}", "skills"),
-            new PermissionSeed("PATCH", "/skills/{id}", "skills"),
-            new PermissionSeed("DELETE", "/skills/{id}", "skills")
+            new PermissionSeed("PATCH", "/matches/{id}", "matches"),
+            new PermissionSeed("PATCH", "/matches/{id}/result", "matches"),
+            new PermissionSeed("DELETE", "/matches/{id}", "matches"),
+            new PermissionSeed("GET", "/matches/{id}/bets", "bets"),
+            new PermissionSeed("POST", "/matches/{id}/settle", "bets"),
+            new PermissionSeed("GET", "/bets/me", "bets"),
+            new PermissionSeed("POST", "/bets", "bets"),
+            new PermissionSeed("PATCH", "/bets/{id}/cancel", "bets"),
+            new PermissionSeed("GET", "/fans/me", "fans"),
+            new PermissionSeed("GET", "/fans/me/payment-methods", "fans"),
+            new PermissionSeed("POST", "/fans/me/payment-methods", "fans"),
+            new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fans"),
+            new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fans"),
+            new PermissionSeed("GET", "/payment-method", "payment-method"),
+            new PermissionSeed("GET", "/payment-method/{id}", "payment-method"),
+            new PermissionSeed("POST", "/payment-method", "payment-method"),
+            new PermissionSeed("PATCH", "/payment-method/{id}", "payment-method"),
+            new PermissionSeed("DELETE", "/payment-method/{id}", "payment-method"),
+            new PermissionSeed("GET", "/matches/{id}/annotations", "annotations"),
+            new PermissionSeed("POST", "/matches/{id}/annotations", "annotations"),
+            new PermissionSeed(
+                    "PATCH",
+                    "/matches/{id}/annotations/{id}",
+                    "annotations"),
+            new PermissionSeed(
+                    "DELETE",
+                    "/matches/{id}/annotations/{id}",
+                    "annotations"),
+            new PermissionSeed("GET", "/matches/{id}/tracking", "tracking"),
+            new PermissionSeed("GET", "/matches/{id}/tracking/history", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/start", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/players/{id}/position", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/ball/position", "tracking"),
+            new PermissionSeed("POST", "/matches/{id}/tracking/stop", "tracking")
     };
 
     private static final PermissionSeed[] SPORTS_ADMIN_PERMISSIONS = {
@@ -203,41 +207,19 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/skills/{id}", "skills"),
             new PermissionSeed("PATCH", "/skills/{id}", "skills"),
             new PermissionSeed("DELETE", "/skills/{id}", "skills"),
+            new PermissionSeed("GET", "/tournaments", "tournaments"),
+            new PermissionSeed("POST", "/tournaments", "tournaments"),
+            new PermissionSeed("GET", "/tournaments/{id}", "tournaments"),
+            new PermissionSeed("PATCH", "/tournaments/{id}", "tournaments"),
+            new PermissionSeed("DELETE", "/tournaments/{id}", "tournaments"),
             new PermissionSeed("GET", "/matches", "matches"),
             new PermissionSeed("GET", "/matches/available", "matches"),
+            new PermissionSeed("GET", "/matches/upcoming", "matches"),
             new PermissionSeed("GET", "/matches/{id}", "matches"),
             new PermissionSeed("POST", "/matches", "matches"),
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
             new PermissionSeed("PATCH", "/matches/{id}", "matches"),
             new PermissionSeed("PATCH", "/matches/{id}/result", "matches"),
             new PermissionSeed("DELETE", "/matches/{id}", "matches"),
-            new PermissionSeed("GET", "/matches/{id}/bets", "bets"),
-            new PermissionSeed("POST", "/matches/{id}/settle", "bets"),
-<<<<<<< HEAD
-            new PermissionSeed("GET", "/bets/me", "bets"),
-            new PermissionSeed("POST", "/bets", "bets"),
-            new PermissionSeed("PATCH", "/bets/{id}/cancel", "bets"),
-            new PermissionSeed("GET", "/fans/me", "fans"),
-            new PermissionSeed("GET", "/fans/me/payment-methods", "fans"),
-            new PermissionSeed("POST", "/fans/me/payment-methods", "fans"),
-            new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fans"),
-            new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fans"),
-            new PermissionSeed("GET", "/payment-method", "payment-method"),
-            new PermissionSeed("GET", "/payment-method/{id}", "payment-method"),
-            new PermissionSeed("POST", "/payment-method", "payment-method"),
-            new PermissionSeed("PATCH", "/payment-method/{id}", "payment-method"),
-            new PermissionSeed("DELETE", "/payment-method/{id}", "payment-method"),
-            new PermissionSeed("GET", "/matches/{id}/annotations", "annotations"),
-            new PermissionSeed("POST", "/matches/{id}/annotations", "annotations"),
-            new PermissionSeed(
-                    "PATCH",
-                    "/matches/{id}/annotations/{id}",
-                    "annotations"),
-            new PermissionSeed(
-                    "DELETE",
-                    "/matches/{id}/annotations/{id}",
-                    "annotations")
-=======
             new PermissionSeed("GET", "/matches/{id}/annotations", "annotations"),
             new PermissionSeed("POST", "/matches/{id}/annotations", "annotations"),
             new PermissionSeed("PATCH", "/matches/{id}/annotations/{id}", "annotations"),
@@ -248,15 +230,15 @@ public class DatabaseSeeder {
             new PermissionSeed("POST", "/matches/{id}/tracking/players/{id}/position", "tracking"),
             new PermissionSeed("POST", "/matches/{id}/tracking/ball/position", "tracking"),
             new PermissionSeed("POST", "/matches/{id}/tracking/stop", "tracking")
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
     };
 
     private static final PermissionSeed[] FAN_PERMISSIONS = {
             new PermissionSeed("GET", "/matches", "matches"),
             new PermissionSeed("GET", "/matches/available", "matches"),
-<<<<<<< HEAD
             new PermissionSeed("GET", "/matches/upcoming", "matches"),
             new PermissionSeed("GET", "/matches/{id}", "matches"),
+            new PermissionSeed("GET", "/matches/{id}/tracking", "tracking"),
+            new PermissionSeed("GET", "/matches/{id}/tracking/history", "tracking"),
             new PermissionSeed("GET", "/tournaments/{id}/matches", "matches"),
             new PermissionSeed("GET", "/tournaments/{id}/phases/{id}/matches", "matches"),
             new PermissionSeed("GET", "/tournaments/{id}/phases", "tournament-phases"),
@@ -266,27 +248,15 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/tournaments", "tournaments"),
             new PermissionSeed("GET", "/tournaments/{id}", "tournaments"),
             new PermissionSeed("GET", "/tournaments/{id}/development", "tournaments"),
-            new PermissionSeed("GET", "/fans/me", "fans"),
-            new PermissionSeed("GET", "/fans/me/payment-methods", "fans"),
-            new PermissionSeed("POST", "/fans/me/payment-methods", "fans"),
-            new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fans"),
-            new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fans"),
-            new PermissionSeed("GET", "/fans/me/followed-teams", "fans"),
-            new PermissionSeed("POST", "/fans/me/followed-teams", "fans"),
-            new PermissionSeed("DELETE", "/fans/me/followed-teams/{id}", "fans"),
-            new PermissionSeed("GET", "/bets/me", "bets"),
-            new PermissionSeed("POST", "/bets", "bets"),
-            new PermissionSeed("PATCH", "/bets/{id}/cancel", "bets")
-=======
-            new PermissionSeed("GET", "/matches/{id}", "matches"),
-            new PermissionSeed("GET", "/matches/{id}/tracking", "tracking"),
-            new PermissionSeed("GET", "/matches/{id}/tracking/history", "tracking"),
             new PermissionSeed("GET", "/payment-method", "payment-methods"),
             new PermissionSeed("GET", "/fans/me", "fans"),
             new PermissionSeed("GET", "/fans/me/payment-methods", "fan-payment-methods"),
             new PermissionSeed("POST", "/fans/me/payment-methods", "fan-payment-methods"),
             new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fan-payment-methods"),
             new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fan-payment-methods"),
+            new PermissionSeed("GET", "/fans/me/followed-teams", "fans"),
+            new PermissionSeed("POST", "/fans/me/followed-teams", "fans"),
+            new PermissionSeed("DELETE", "/fans/me/followed-teams/{id}", "fans"),
             new PermissionSeed("GET", "/bets/me", "bets"),
             new PermissionSeed("POST", "/bets", "bets"),
             new PermissionSeed("PATCH", "/bets/{id}/cancel", "bets")
@@ -323,7 +293,6 @@ public class DatabaseSeeder {
             new PermissionRename("GET", "/habilidades/{id}", "/skills/{id}", "skills"),
             new PermissionRename("PATCH", "/habilidades/{id}", "/skills/{id}", "skills"),
             new PermissionRename("DELETE", "/habilidades/{id}", "/skills/{id}", "skills")
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
     };
 
     private final UserRepository userRepository;
@@ -342,18 +311,12 @@ public class DatabaseSeeder {
             Role consultantRole = findOrCreateRole(
                     "CONSULTOR",
                     "Consulta de usuarios");
-<<<<<<< HEAD
-            Role fanRole = findOrCreateRole(
-                    "AFICIONADO",
-                    "Aficionado");
-=======
             Role sportsAdminRole = findOrCreateRole(
                     "ADMINISTRADOR DEPORTIVO",
                     "Gestión deportiva y de partidos");
             Role fanRole = findOrCreateRole(
-                    "FAN",
+                    "AFICIONADO",
                     "Consulta de partidos y gestión de apuestas propias");
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
             User adminUser = findOrCreateUser();
 
             assignRole(adminUser, adminRole);
@@ -375,12 +338,9 @@ public class DatabaseSeeder {
             for (PermissionSeed seed : ADMIN_PERMISSIONS) {
                 assignPermission(adminRole, findOrCreatePermission(seed));
             }
-<<<<<<< HEAD
-=======
             for (PermissionSeed seed : SPORTS_ADMIN_PERMISSIONS) {
                 assignPermission(sportsAdminRole, findOrCreatePermission(seed));
             }
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
             for (PermissionSeed seed : FAN_PERMISSIONS) {
                 assignPermission(fanRole, findOrCreatePermission(seed));
             }

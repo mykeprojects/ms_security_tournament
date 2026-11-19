@@ -115,18 +115,12 @@ Al iniciar, el seeder crea si no existen:
 
 - Usuario administrador: `admin@uc.edu.co`
 - Contraseña inicial de desarrollo: `Admin123!`
-<<<<<<< HEAD
-- Roles `ADMIN`, `CONSULTOR` y `AFICIONADO`
-- Permisos iniciales para el administrador, permisos de consulta para el
-  consultor y permisos mínimos de operación para el aficionado
-=======
-- Roles `ADMIN`, `CONSULTOR`, `ADMINISTRADOR DEPORTIVO` y `FAN`
+- Roles `ADMIN`, `CONSULTOR`, `ADMINISTRADOR DEPORTIVO` y `AFICIONADO`
 - Permisos de las rutas existentes de ambos backends, con `ADMIN` asociado a
   todos los permisos
 - Permisos de consulta de usuarios para `CONSULTOR`, permisos de gestión
   deportiva para `ADMINISTRADOR DEPORTIVO` y permisos de lectura/apuestas
-  propias para `FAN`
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
+  propias para `AFICIONADO`
 
 Estas credenciales están destinadas únicamente al desarrollo local. Cambia la
 contraseña y la estrategia de inicialización antes de desplegar el servicio en

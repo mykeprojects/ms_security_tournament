@@ -71,11 +71,7 @@ public class DynamicAuthorizationManager
         String requestUri = context.getRequest().getRequestURI();
         String method = context.getRequest().getMethod();
         if ("POST".equals(method)
-<<<<<<< HEAD
                 && INTERNAL_PERMISSION_VALIDATION_PATH.equals(requestUri)) {
-=======
-                && "/api/internal/security/permissions-validation".equals(requestUri)) {
->>>>>>> 25f618ded9d43fd85c4dfd0de6e357650955a440
             return new AuthorizationDecision(true);
         }
         if ("PUT".equals(method)

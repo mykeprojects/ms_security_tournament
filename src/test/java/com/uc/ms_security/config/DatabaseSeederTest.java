@@ -98,7 +98,7 @@ class DatabaseSeederTest {
                 List.of(
                         "consultor@uc.edu.co:CONSULTOR",
                         "deportivo@uc.edu.co:ADMINISTRADOR DEPORTIVO",
-                        "aficionado@uc.edu.co:FAN"),
+                        "aficionado@uc.edu.co:AFICIONADO"),
                 savedUserRoles.stream()
                         .filter(userRole -> !userRole.getUser().getEmail()
                                 .equals("admin@uc.edu.co"))
