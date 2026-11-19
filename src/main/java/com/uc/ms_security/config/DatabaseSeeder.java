@@ -231,6 +231,21 @@ public class DatabaseSeeder {
             User adminUser = findOrCreateUser();
 
             assignRole(adminUser, adminRole);
+            seedDemoUser(
+                    "Consultor",
+                    "consultor@uc.edu.co",
+                    "Consultor124!",
+                    consultantRole);
+            seedDemoUser(
+                    "Administrador Deportivo",
+                    "deportivo@uc.edu.co",
+                    "Deportivo123!",
+                    sportsAdminRole);
+            seedDemoUser(
+                    "Aficionado",
+                    "aficionado@uc.edu.co",
+                    "Aficionado123!",
+                    fanRole);
             for (PermissionSeed seed : ADMIN_PERMISSIONS) {
                 assignPermission(adminRole, findOrCreatePermission(seed));
             }
@@ -250,6 +265,22 @@ public class DatabaseSeeder {
                             new PermissionSeed("GET", "/api/users/{id}", "users")));
             rolePermissionSetService.ensureAdminHasAllPermissions();
         };
+    }
+
+    private void seedDemoUser(
+            String name,
+            String email,
+            String password,
+            Role role) {
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            User created = new User();
+            created.setName(name);
+            created.setEmail(email);
+            created.setPassword(passwordEncoder.encode(password));
+            created.setTwoFactorEnabled(false);
+            return userRepository.save(created);
+        });
+        assignRole(user, role);
     }
 
     private Role findOrCreateRole(String name, String description) {
