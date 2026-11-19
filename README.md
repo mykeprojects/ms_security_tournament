@@ -115,9 +115,9 @@ Al iniciar, el seeder crea si no existen:
 
 - Usuario administrador: `admin@uc.edu.co`
 - Contraseña inicial de desarrollo: `Admin123!`
-- Roles `ADMIN` y `CONSULTOR`
-- Permisos iniciales para el administrador y permisos de consulta para el
-  consultor
+- Roles `ADMIN`, `CONSULTOR` y `AFICIONADO`
+- Permisos iniciales para el administrador, permisos de consulta para el
+  consultor y permisos mínimos de operación para el aficionado
 
 Estas credenciales están destinadas únicamente al desarrollo local. Cambia la
 contraseña y la estrategia de inicialización antes de desplegar el servicio en
@@ -212,7 +212,6 @@ token:
 ```http
 POST /api/auth/register
 Content-Type: application/json
-Authorization: Bearer <accessToken>
 ```
 
 ```json
@@ -229,6 +228,24 @@ especial de `@$!%*?&`, sin espacios. Se almacena con BCrypt. Las respuestas de
 usuario no incluyen la contraseña. La eliminación de un usuario es física;
 elimina sus asociaciones y datos dependientes, pero no borra los roles ni los
 permisos del sistema.
+
+Cada registro nuevo con credenciales, y el primer inicio de sesión mediante
+OAuth, recibe automáticamente el rol `AFICIONADO`. Después de crear la cuenta,
+el microservicio de seguridad solicita al sistema deportivo el registro del
+aficionado usando el `id` del usuario como `externalUserId`. Si el sistema
+deportivo no responde, la cuenta recién creada se elimina como compensación y el
+registro responde `503`.
+
+La integración requiere:
+
+```properties
+security.sports.base-url=${SPORTS_SYSTEM_URL:http://localhost:3000}
+security.sports.internal-api-key=${INTERNAL_API_KEY:dev-internal-key}
+```
+
+El valor de `INTERNAL_API_KEY` debe coincidir con `INTERNAL_API_KEY` en el
+`.env` de `ms_sport_system`. Si no se define en el entorno de
+`ms_security_tournament`, se usa el valor de desarrollo `dev-internal-key`.
 
 ### Perfiles — HU-SE-02
 

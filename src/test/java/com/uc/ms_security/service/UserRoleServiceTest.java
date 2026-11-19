@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -24,15 +25,19 @@ import static org.mockito.Mockito.when;
 class UserRoleServiceTest {
 
     private UserRoleRepository repository;
+    private UserRepository userRepository;
+    private RoleRepository roleRepository;
     private UserRoleService service;
 
     @BeforeEach
     void setUp() {
         repository = mock(UserRoleRepository.class);
+        userRepository = mock(UserRepository.class);
+        roleRepository = mock(RoleRepository.class);
         service = new UserRoleService(
                 repository,
-                mock(UserRepository.class),
-                mock(RoleRepository.class),
+                userRepository,
+                roleRepository,
                 mock(UserRoleMapper.class));
     }
 
@@ -87,6 +92,37 @@ class UserRoleServiceTest {
                 () -> service.delete(2L, 10L, 1L));
 
         verify(repository, never()).delete(targetAssignment);
+    }
+
+    @Test
+    void assignsTheDefaultRoleOnlyWhenItIsMissing() {
+        User user = new User();
+        user.setId(7L);
+        Role role = new Role();
+        role.setId(20L);
+        role.setName("AFICIONADO");
+        when(roleRepository.findByNameIgnoreCase("AFICIONADO"))
+                .thenReturn(Optional.of(role));
+        when(repository.existsByUserIdAndRoleId(7L, 20L)).thenReturn(false);
+        when(userRepository.findById(7L)).thenReturn(Optional.of(user));
+
+        service.assignIfMissing(7L, "AFICIONADO");
+
+        verify(repository).save(any(UserRole.class));
+    }
+
+    @Test
+    void doesNotDuplicateAnExistingDefaultRoleAssignment() {
+        Role role = new Role();
+        role.setId(20L);
+        role.setName("AFICIONADO");
+        when(roleRepository.findByNameIgnoreCase("AFICIONADO"))
+                .thenReturn(Optional.of(role));
+        when(repository.existsByUserIdAndRoleId(7L, 20L)).thenReturn(true);
+
+        service.assignIfMissing(7L, "AFICIONADO");
+
+        verify(repository, never()).save(any(UserRole.class));
     }
 
     private UserRole assignment(Long userId, String roleName) {

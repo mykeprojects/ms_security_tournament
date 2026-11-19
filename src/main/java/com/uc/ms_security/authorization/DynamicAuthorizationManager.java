@@ -30,6 +30,8 @@ public class DynamicAuthorizationManager
             Pattern.compile("^/api/user-roles/users/(\\d+)$");
     private static final Pattern ROLE_PERMISSION_REPLACEMENT_PATH =
             Pattern.compile("^/api/roles/(\\d+)/permissions$");
+    private static final String INTERNAL_PERMISSION_VALIDATION_PATH =
+            "/api/internal/security/permissions-validation";
     private final PermissionService permissionService;
     private final SessionService sessionService;
 
@@ -68,6 +70,10 @@ public class DynamicAuthorizationManager
 
         String requestUri = context.getRequest().getRequestURI();
         String method = context.getRequest().getMethod();
+        if ("POST".equals(method)
+                && INTERNAL_PERMISSION_VALIDATION_PATH.equals(requestUri)) {
+            return new AuthorizationDecision(true);
+        }
         if ("PUT".equals(method)
                 && ROLE_PERMISSION_REPLACEMENT_PATH.matcher(requestUri).matches()) {
             return new AuthorizationDecision(hasPermissionAssignmentAccess(userId));

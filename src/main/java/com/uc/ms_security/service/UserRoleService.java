@@ -40,6 +40,25 @@ public class UserRoleService {
         return mapper.toResponseDTO(repository.save(userRole));
     }
 
+    @Transactional
+    public void assignIfMissing(Long userId, String roleName) {
+        Role role = roleRepository.findByNameIgnoreCase(roleName)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCase.INTERNAL_ERROR,
+                        "El rol " + roleName + " no está configurado"
+                ));
+        if (repository.existsByUserIdAndRoleId(userId, role.getId())) {
+            return;
+        }
+        UserRole userRole = new UserRole();
+        userRole.setUser(userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCase.NOT_FOUND,
+                        "Usuario no encontrado con id: " + userId)));
+        userRole.setRole(role);
+        repository.save(userRole);
+    }
+
     @Transactional(readOnly = true)
     public List<UserRoleResponseDTO> findAll() {
         return mapper.toResponseDTOList(repository.findAll());

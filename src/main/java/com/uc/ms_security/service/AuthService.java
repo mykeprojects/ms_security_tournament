@@ -13,6 +13,7 @@ import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.repository.UserRepository;
 import com.uc.ms_security.service.identity.ExternalIdentity;
 import com.uc.ms_security.service.identity.ExternalIdentityProvider;
+import com.uc.ms_security.service.registration.RegistrationService;
 import com.uc.ms_security.service.twofactor.TwoFactorChallengeStarted;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final UserService userService;
+    private final RegistrationService registrationService;
     private final SessionService sessionService;
     private final TwoFactorService twoFactorService;
     private final List<ExternalIdentityProvider> externalIdentityProviders;
@@ -66,7 +67,7 @@ public class AuthService {
     }
 
     public UserResponseDTO register(CreateUserDTO dto) {
-        return userService.create(dto);
+        return registrationService.register(dto);
     }
 
     public AuthResponseDTO loginWithExternalProvider(ExternalLoginRequestDTO dto) {
@@ -82,11 +83,7 @@ public class AuthService {
                 dto.getProvider());
         User user = userRepository.findByEmail(identity.email())
                 .map(existingUser -> validateExternalAccount(existingUser, identity))
-                .orElseGet(() -> userService.createExternal(
-                        identity.name(),
-                        identity.email(),
-                        identity.provider(),
-                        identity.subject()));
+                .orElseGet(() -> registrationService.registerExternal(identity));
 
         return createSession(user);
     }

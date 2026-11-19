@@ -110,6 +110,18 @@ class DynamicAuthorizationManagerTest {
     }
 
     @Test
+    void allowsAuthenticatedRequestsToReachInternalPermissionValidation() {
+        Authentication authentication = authenticatedAs("42");
+
+        assertTrue(authorizationManager.authorize(
+                () -> authentication,
+                requestContext(
+                        "POST",
+                        "/api/internal/security/permissions-validation"))
+                .isGranted());
+    }
+
+    @Test
     void deniesAuthenticatedUserAccessToAnotherUsersEffectivePermissions() {
         Authentication authentication = authenticatedAs("42");
 
