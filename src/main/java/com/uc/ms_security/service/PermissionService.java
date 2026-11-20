@@ -5,6 +5,7 @@ import com.uc.ms_security.entity.Permission;
 import com.uc.ms_security.exception.*;
 import com.uc.ms_security.mapper.PermissionMapper;
 import com.uc.ms_security.repository.PermissionRepository;
+import com.uc.ms_security.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -19,6 +20,7 @@ public class PermissionService {
     private final PermissionRepository repository;
     private final PermissionMapper mapper;
     private final RolePermissionSetService rolePermissionSetService;
+    private final UserRoleRepository userRoleRepository;
 
     @Transactional
     public PermissionResponseDTO create(CreatePermissionDTO dto) {
@@ -67,6 +69,9 @@ public class PermissionService {
         if (userId == null || httpMethod == null || requestUrl == null) {
             return false;
         }
+        if (isAdministrator(userId)) {
+            return true;
+        }
         return repository.findByUserIdAndMethodAndUrl(
                         userId,
                         normalizeMethod(httpMethod),
@@ -74,6 +79,12 @@ public class PermissionService {
                 .stream()
                 .findAny()
                 .isPresent();
+    }
+
+    private boolean isAdministrator(Long userId) {
+        return userRoleRepository.findAllByUserId(userId).stream()
+                .map(userRole -> userRole.getRole())
+                .anyMatch(rolePermissionSetService::isAdministratorRole);
     }
 
     private String normalizeMethod(String method) {

@@ -45,7 +45,7 @@ public class Permission {
     @Column(nullable = false, length = 10)
     private String method;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 255)
     private String model;
 
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)

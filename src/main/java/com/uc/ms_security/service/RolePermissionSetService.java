@@ -51,8 +51,14 @@ public class RolePermissionSetService {
     }
 
     public boolean isAdministratorRoleName(String roleName) {
-        return roleName != null
-                && "ADMIN".equalsIgnoreCase(roleName.trim());
+        if (roleName == null) {
+            return false;
+        }
+        String normalized = roleName.trim();
+        return "ADMIN".equalsIgnoreCase(normalized)
+                || "ROLE_ADMIN".equalsIgnoreCase(normalized)
+                || "ADMINISTRADOR".equalsIgnoreCase(normalized)
+                || "ROLE_ADMINISTRADOR".equalsIgnoreCase(normalized);
     }
 
     public boolean isAdministratorRole(Role role) {

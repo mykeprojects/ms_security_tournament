@@ -67,8 +67,8 @@ public class DatabaseSeeder {
             new PermissionSeed("GET", "/api/permissions/{id}", "permissions"),
             new PermissionSeed("PUT", "/api/permissions/{id}", "permissions"),
             new PermissionSeed("DELETE", "/api/permissions/{id}", "permissions"),
-            new PermissionSeed("POST", "/payment-method", "payment-methods"),
             new PermissionSeed("GET", "/payment-method", "payment-methods"),
+            new PermissionSeed("POST", "/payment-method", "payment-methods"),
             new PermissionSeed("GET", "/payment-method/{id}", "payment-methods"),
             new PermissionSeed("PATCH", "/payment-method/{id}", "payment-methods"),
             new PermissionSeed("DELETE", "/payment-method/{id}", "payment-methods"),
@@ -149,15 +149,10 @@ public class DatabaseSeeder {
             new PermissionSeed("POST", "/bets", "bets"),
             new PermissionSeed("PATCH", "/bets/{id}/cancel", "bets"),
             new PermissionSeed("GET", "/fans/me", "fans"),
-            new PermissionSeed("GET", "/fans/me/payment-methods", "fans"),
-            new PermissionSeed("POST", "/fans/me/payment-methods", "fans"),
-            new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fans"),
-            new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fans"),
-            new PermissionSeed("GET", "/payment-method", "payment-method"),
-            new PermissionSeed("GET", "/payment-method/{id}", "payment-method"),
-            new PermissionSeed("POST", "/payment-method", "payment-method"),
-            new PermissionSeed("PATCH", "/payment-method/{id}", "payment-method"),
-            new PermissionSeed("DELETE", "/payment-method/{id}", "payment-method"),
+            new PermissionSeed("GET", "/fans/me/payment-methods", "fan-payment-methods"),
+            new PermissionSeed("POST", "/fans/me/payment-methods", "fan-payment-methods"),
+            new PermissionSeed("PATCH", "/fans/me/payment-methods/{id}", "fan-payment-methods"),
+            new PermissionSeed("DELETE", "/fans/me/payment-methods/{id}", "fan-payment-methods"),
             new PermissionSeed("GET", "/matches/{id}/annotations", "annotations"),
             new PermissionSeed("POST", "/matches/{id}/annotations", "annotations"),
             new PermissionSeed(
@@ -412,14 +407,13 @@ public class DatabaseSeeder {
     }
 
     private Permission findOrCreatePermission(PermissionSeed seed) {
-        return permissionRepository.findByUrlAndMethod(
-                seed.url(), seed.method()).orElseGet(() -> {
-            Permission permission = new Permission();
-            permission.setUrl(seed.url());
-            permission.setMethod(seed.method());
-            permission.setModel(seed.model());
-            return permissionRepository.save(permission);
-        });
+        Permission permission = permissionRepository
+                .findByUrlAndMethod(seed.url(), seed.method())
+                .orElseGet(Permission::new);
+        permission.setUrl(seed.url());
+        permission.setMethod(seed.method());
+        permission.setModel(seed.model());
+        return permissionRepository.save(permission);
     }
 
     private void assignRole(User user, Role role) {

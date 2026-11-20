@@ -74,6 +74,9 @@ public class DynamicAuthorizationManager
                 && INTERNAL_PERMISSION_VALIDATION_PATH.equals(requestUri)) {
             return new AuthorizationDecision(true);
         }
+        if (permissionService.hasPermission(userId, method, requestUri)) {
+            return new AuthorizationDecision(true);
+        }
         if ("PUT".equals(method)
                 && ROLE_PERMISSION_REPLACEMENT_PATH.matcher(requestUri).matches()) {
             return new AuthorizationDecision(hasPermissionAssignmentAccess(userId));
@@ -82,11 +85,7 @@ public class DynamicAuthorizationManager
             return new AuthorizationDecision(true);
         }
 
-        boolean permitted = permissionService.hasPermission(
-                userId,
-                method,
-                requestUri);
-        return new AuthorizationDecision(permitted);
+        return new AuthorizationDecision(false);
     }
 
     private boolean hasPermissionAssignmentAccess(long userId) {
