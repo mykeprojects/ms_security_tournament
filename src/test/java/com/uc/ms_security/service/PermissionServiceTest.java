@@ -4,6 +4,7 @@ import com.uc.ms_security.dto.permission.CreatePermissionDTO;
 import com.uc.ms_security.entity.Permission;
 import com.uc.ms_security.mapper.PermissionMapper;
 import com.uc.ms_security.repository.PermissionRepository;
+import com.uc.ms_security.repository.UserRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,8 @@ class PermissionServiceTest {
         service = new PermissionService(
                 repository,
                 new PermissionMapper(),
-                permissionSetService);
+                permissionSetService,
+                mock(UserRoleRepository.class));
     }
 
     @Test
