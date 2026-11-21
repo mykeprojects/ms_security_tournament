@@ -148,6 +148,8 @@ class DatabaseSeederTest {
                 "POST /tournaments/{id}/phases/{id}/matches",
                 "GET /matches/{id}/bets",
                 "POST /matches/{id}/settle",
+                "POST /matches/{id}/start",
+                "POST /matches/{id}/finish",
                 "POST /matches/{id}/tracking/pause",
                 "POST /matches/{id}/tracking/resume")));
         Set<String> administratorPermissions = savedRolePermissions.stream()
@@ -174,6 +176,7 @@ class DatabaseSeederTest {
                 "GET /tournaments/{id}",
                 "GET /matches",
                 "GET /matches/{id}",
+                "GET /matches/{id}/annotations",
                 "GET /tournaments/{id}/matches")));
         assertFalse(fanPermissions.contains("POST /teams"));
         assertFalse(fanPermissions.contains("POST /tournaments"));
